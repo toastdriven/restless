@@ -66,6 +66,8 @@ class Resource(object):
         return self.request.method.upper()
 
     def build_response(self, data, status=200):
+        # FIXME: Remove the Django.
+        #        This should be plain old WSGI by default if possible
         # By default, Django-esque.
         from django.http import HttpResponse
         resp = HttpResponse(data, content_type='application/json')
@@ -80,9 +82,7 @@ class Resource(object):
         return self.build_response(data, status=status)
 
     def is_debug(self):
-        # By default, Django-esque.
-        from django.conf import settings
-        return settings.DEBUG
+        return False
 
     def handle(self, endpoint, *args, **kwargs):
         method = self.request_method()

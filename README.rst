@@ -62,12 +62,12 @@ Example code::
     # posts/api.py
     from django.contrib.auth.models import User
 
-    from restless import Resource, paginated
+    from restless.dj import DjangoResource
 
     from posts.models import Post
 
 
-    class PostResource(Resource):
+    class PostResource(DjangoResource):
         # Controls what data is included in the serialized output.
         fields = {
             'id': 'id',
@@ -87,25 +87,21 @@ Example code::
 
         # POST /
         def create(self, data):
-            author = User.objects.get(username=data['author'])
-
             return Post.objects.create(
                 title=self.data['title'],
-                user=self.author,
+                user=User.objects.get(username=self.data['author']),
                 content=self.data['body']
             )
 
         # PUT /pk/
         def update(self, pk):
-            author = User.objects.get(username=self.data['author'])
-
             try:
                 post = Post.objects.get(id=pk)
             except Post.DoesNotExist:
                 post = Post()
 
             post.title = self.data['title']
-            post.user = author
+            post.user = User.objects.get(username=self.data['author'])
             post.content = self.data['body']
             post.save()
             return post
@@ -125,7 +121,7 @@ Hooking it up::
         # The usual suspects, then...
 
         url(r'^posts/$', PostResource.as_list(), name='api_posts_list'),
-        url(r'^posts/(?P<pk>\d+)$', PostResource.as_detail(), name='api_posts_detail'),
+        url(r'^posts/(?P<pk>\d+)/$', PostResource.as_detail(), name='api_posts_detail'),
     )
 
 
