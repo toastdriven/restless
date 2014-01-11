@@ -1,0 +1,149 @@
+========
+restless
+========
+
+A lightweight REST miniframework for Python.
+
+Works great with Django & Flask, but should be useful for many other Python web
+frameworks. Based on the lessons learned from Tastypie_ & other REST libraries.
+
+.. _Tastypie: http://tastypieapi.org/
+
+
+Features
+========
+
+* Small, fast codebase
+* JSON output by default, but overridable
+* RESTful
+* Python 3.3+ (with shims to make broke-ass Python 2.6+ work)
+* Flexible
+* Pagination
+
+
+Anti-Features
+=============
+
+(Things that will never be added...)
+
+* Automatic ORM integration
+* Authorization (per-object or not)
+* Extensive filtering options
+* XML output (though you can implement your own)
+* Metaclasses
+* Mixins
+* HATEOAS
+
+
+Why?
+====
+
+Quite simply, I care about creating flexible & RESTFul APIs. In building
+Tastypie, I tried to create something extremely complete & comprehensive.
+The result was writing a lot of hook methods (for easy extensibility) & a lot
+of (perceived) bloat, as I tried to accommodate for everything people might
+want/need in a flexible/overridable manner.
+
+But in reality, all I really ever personally want are the RESTful verbs, JSON
+serialization & the ability of override behavior.
+
+This one is written for me.
+
+
+Manifesto
+=========
+
+Rather than try to build something that automatically does the typically
+correct thing within each of the views, it's up to you to implement the bodies
+of various HTTP methods.
+
+Example code::
+
+    # posts/api.py
+    from django.contrib.auth.models import User
+
+    from restless import Resource, paginated
+
+    from posts.models import Post
+
+
+    class PostResource(Resource):
+        # Controls what data is included in the serialized output.
+        fields = {
+            'id': 'id',
+            'title': 'title',
+            'author': 'user.username',
+            'body': 'content',
+            'posted_on': 'posted_on',
+        }
+
+        # GET /
+        def list(self):
+            return Post.objects.all()
+
+        # GET /pk/
+        def detail(self, pk):
+            return Post.objects.get(id=pk)
+
+        # POST /
+        def create(self, data):
+            author = User.objects.get(username=data['author'])
+
+            return Post.objects.create(
+                title=self.data['title'],
+                user=self.author,
+                content=self.data['body']
+            )
+
+        # PUT /pk/
+        def update(self, pk):
+            author = User.objects.get(username=self.data['author'])
+
+            try:
+                post = Post.objects.get(id=pk)
+            except Post.DoesNotExist:
+                post = Post()
+
+            post.title = self.data['title']
+            post.user = author
+            post.content = self.data['body']
+            post.save()
+            return post
+
+        # DELETE /pk/
+        def delete(self, pk):
+            Post.objects.get(id=pk).delete()
+
+Hooking it up::
+
+    # api/urls.py
+    from django.conf.urls.default import url, patterns
+
+    from posts.api import PostResource
+
+    urlpatterns = patterns('',
+        # The usual suspects, then...
+
+        url(r'^posts/$', PostResource.as_list(), name='api_posts_list'),
+        url(r'^posts/(?P<pk>\d+)$', PostResource.as_detail(), name='api_posts_detail'),
+    )
+
+
+Licence
+=======
+
+BSD
+
+
+TODO
+====
+
+For v1.0.0, the following things need completing:
+
+* Finish the tests
+* Test in another live Django environment
+* Test in a Flask environment
+* Docstrings everywhere
+* Tutorial documentation
+* Extension documentation
+* API docs
