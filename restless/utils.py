@@ -1,3 +1,12 @@
+import datetime
+import decimal
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+
 def lookup_data(lookup, data):
     value = data
     parts = lookup.split('.')
@@ -20,3 +29,13 @@ def lookup_data(lookup, data):
 
     # There's more to lookup, so dive in recursively.
     return lookup_data(remaining_lookup, value)
+
+
+class MoreTypesJSONEncoder(json.JSONEncoder):
+    def default(self, data):
+        if isinstance(data, (datetime.datetime, datetime.date, datetime.time)):
+            return data.isoformat()
+        elif isinstance(data, decimal.Decimal):
+            return str(data)
+        else:
+            return super(MoreTypesJSONEncoder, self).default(data)

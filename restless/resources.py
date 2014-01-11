@@ -2,12 +2,7 @@ import six
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .exceptions import MethodNotImplemented
-from .utils import lookup_data
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
+from .utils import json, lookup_data, MoreTypesJSONEncoder
 
 
 class Resource(object):
@@ -138,14 +133,14 @@ class Resource(object):
             return ''
 
         final_data = [self.prepare(item) for item in data]
-        return json.dumps(final_data)
+        return json.dumps(final_data, cls=MoreTypesJSONEncoder)
 
     def serialize_detail(self, data):
         if data is None:
             return ''
 
         final_data = self.prepare(data)
-        return json.dumps(final_data)
+        return json.dumps(final_data, cls=MoreTypesJSONEncoder)
 
     def prepare(self, data):
         result = {}
