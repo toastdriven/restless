@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls import patterns, url
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -24,3 +25,15 @@ class DjangoResource(Resource):
         resp = HttpResponse(data, content_type='application/json')
         resp.status_code = status
         return resp
+
+    @classmethod
+    def urls(cls, name_prefix=None):
+        if name_prefix is None:
+            name_prefix = 'api_{0}'.format(
+                cls.__name__.replace('Resource', '').lower()
+            )
+
+        return patterns('',
+            url(r'^$', cls.as_list(), name=name_prefix + '_list'),
+            url(r'^(?P<pk>\d+)/$', cls.as_detail(), name=name_prefix + '_detail'),
+        )

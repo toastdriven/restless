@@ -42,3 +42,25 @@ class FlaskResource(Resource):
         return make_response(data, status, {
             'Content-Type': 'application/json'
         })
+
+    @classmethod
+    def add_url_rules(cls, app, rule_prefix, endpoint_prefix=None):
+        methods = ['GET', 'POST', 'PUT', 'DELETE']
+
+        if endpoint_prefix is None:
+            endpoint_prefix = 'api_{0}'.format(
+                cls.__name__.replace('Resource', '').lower()
+            )
+
+        app.add_url_rule(
+            rule_prefix,
+            endpoint=endpoint_prefix + '_list',
+            view_func=cls.as_list(),
+            methods=methods
+        )
+        app.add_url_rule(
+            rule_prefix + '<username>/',
+            endpoint=endpoint_prefix + '_detail',
+            view_func=cls.as_detail(),
+            methods=methods
+        )
