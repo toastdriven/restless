@@ -65,6 +65,10 @@ class Resource(object):
         # By default, Django-esque.
         return self.request.method.upper()
 
+    def request_body(self):
+        # By default, Django-esque.
+        return self.request.body
+
     def build_response(self, data, status=200):
         # FIXME: Remove the Django.
         #        This should be plain old WSGI by default if possible
@@ -117,16 +121,18 @@ class Resource(object):
         return self.build_response(serialized, status=self.status_map.get(method, OK))
 
     def deserialize_list(self):
-        # By default, Django-esque.
-        if self.request.body:
-            return json.loads(self.request.body)
+        body = self.request_body()
+
+        if body:
+            return json.loads(body)
 
         return []
 
     def deserialize_detail(self):
-        # By default, Django-esque.
-        if self.request.body:
-            return json.loads(self.request.body)
+        body = self.request_body()
+
+        if body:
+            return json.loads(body)
 
         return {}
 
