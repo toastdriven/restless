@@ -1,7 +1,7 @@
 import six
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
-from .exceptions import MethodNotImplemented
+from .exceptions import MethodNotImplemented, Unauthorized
 from .utils import json, lookup_data, MoreTypesJSONEncoder
 
 
@@ -103,6 +103,8 @@ class Resource(object):
 
             method = getattr(self, self.http_methods[endpoint][method])
             data = method(*args, **kwargs)
+            if not self.is_authenticated():
+                raise Unauthorized()
 
             serialize_method = getattr(self, 'serialize_{0}'.format(endpoint))
             serialized = serialize_method(data)
@@ -149,6 +151,17 @@ class Resource(object):
             result[fieldname] = lookup_data(lookup, data)
 
         return result
+
+    def is_authenticated(self):
+        """
+
+        By default, we only allow the safe ``GET`` methods. All others are
+        denied.
+        """
+        if self.request_method() == 'GET':
+            return True
+
+        return False
 
     # Common methods the user should implement.
 

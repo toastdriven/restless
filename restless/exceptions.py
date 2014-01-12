@@ -13,6 +13,11 @@ class HttpError(RestlessError):
         super(HttpError, self).__init__(msg)
 
 
+class Unauthorized(HttpError):
+    status = 401
+    msg = "Unauthorized."
+
+
 class NotFound(HttpError):
     status = 404
     msg = "Resource not found."
