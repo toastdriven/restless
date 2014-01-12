@@ -5,7 +5,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .resources import Resource
 
 
-
 class DjangoResource(Resource):
     # Because Django.
     @classmethod
