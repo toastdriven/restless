@@ -102,16 +102,13 @@ class Resource(object):
                     )
                 )
 
-            deserialize_method = getattr(self, 'deserialize_{0}'.format(endpoint))
-            self.data = deserialize_method()
-
-            method = getattr(self, self.http_methods[endpoint][method])
-            data = method(*args, **kwargs)
             if not self.is_authenticated():
                 raise Unauthorized()
 
-            serialize_method = getattr(self, 'serialize_{0}'.format(endpoint))
-            serialized = serialize_method(data)
+            self.data = self.deserialize(method, endpoint)
+            view_method = getattr(self, self.http_methods[endpoint][method])
+            data = view_method(*args, **kwargs)
+            serialized = self.serialize(method, endpoint, data)
         except Exception as err:
             if self.is_debug():
                 raise
@@ -119,6 +116,12 @@ class Resource(object):
             return self.build_error(err)
 
         return self.build_response(serialized, status=self.status_map.get(method, OK))
+
+    def deserialize(self, method, endpoint):
+        if endpoint == 'list':
+            return self.deserialize_list()
+
+        return self.deserialize_detail()
 
     def deserialize_list(self):
         body = self.request_body()
@@ -136,11 +139,21 @@ class Resource(object):
 
         return {}
 
+    def serialize(self, method, endpoint, data):
+        if endpoint == 'list':
+            # Create is a special-case, because you POST it to the collection,
+            # not to a detail.
+            if method == 'POST':
+                return self.serialize_detail(data)
+
+            return self.serialize_list(data)
+        return self.serialize_detail(data)
+
     def serialize_list(self, data):
         if data is None:
             return ''
 
-        final_data = [self.prepare(item) for item in data]
+        prepped_data = [self.prepare(item) for item in data]
         final_data = self.wrap_list_response(prepped_data)
         return json.dumps(final_data, cls=MoreTypesJSONEncoder)
 

@@ -137,8 +137,6 @@ TODO
 For v1.0.0, the following things need completing:
 
 * Finish the tests
-* Test in another live Django environment
-* Test in a Flask environment
 * Docstrings everywhere
 * Tutorial documentation
 * Extension documentation
