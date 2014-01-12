@@ -154,6 +154,10 @@ class Resource(object):
     def prepare(self, data):
         result = {}
 
+        if not self.fields:
+            # No fields specified. Serialize everything.
+            return data
+
         for fieldname, lookup in self.fields.items():
             result[fieldname] = lookup_data(lookup, data)
 
