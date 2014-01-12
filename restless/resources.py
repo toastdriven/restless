@@ -141,6 +141,7 @@ class Resource(object):
             return ''
 
         final_data = [self.prepare(item) for item in data]
+        final_data = self.wrap_list_response(prepped_data)
         return json.dumps(final_data, cls=MoreTypesJSONEncoder)
 
     def serialize_detail(self, data):
@@ -157,6 +158,19 @@ class Resource(object):
             result[fieldname] = lookup_data(lookup, data)
 
         return result
+
+    def wrap_list_response(self, data):
+        """
+        For security in JSON responses, it's better to wrap the result in an
+        ``object``. See http://haacked.com/archive/2009/06/25/json-hijacking.aspx/
+        & similar for details.
+
+        Overridable to allow for modifying the key names, adding data (or just
+        insecurely return a plain old list if that's your thing).
+        """
+        return {
+            "objects": data
+        }
 
     def is_authenticated(self):
         """
