@@ -6,3 +6,5 @@ dist
 env2
 env3
 docs/_build
+tests/.coverage
+tests/cover

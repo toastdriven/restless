@@ -43,7 +43,7 @@ def lookup_data(lookup, data):
     value = data
     parts = lookup.split('.')
 
-    if not parts:
+    if not parts or not parts[0]:
         return value
 
     part = parts[0]

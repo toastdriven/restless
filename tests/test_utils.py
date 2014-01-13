@@ -58,6 +58,10 @@ class LookupDataTestCase(unittest.TestCase):
         with self.assertRaises(AttributeError):
             lookup_data('whee', self.obj_data)
 
+    def test_empty_lookup(self):
+        # We could possibly get here in the recursion.
+        self.assertEqual(lookup_data('', 'Last value'), 'Last value')
+
     def test_complex_miss(self):
         with self.assertRaises(AttributeError):
             lookup_data('more.nested.nope', self.dict_data)

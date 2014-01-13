@@ -249,7 +249,8 @@ class Resource(object):
 
             return self.build_error(err)
 
-        return self.build_response(serialized, status=self.status_map.get(method, OK))
+        status = self.status_map.get(self.http_methods[endpoint][method], OK)
+        return self.build_response(serialized, status=status)
 
     def deserialize(self, method, endpoint, body):
         """

@@ -131,12 +131,36 @@ Licence
 BSD
 
 
+Running the Tests
+=================
+
+Getting the tests running looks like::
+
+    $ virtualenv -p python3 env3
+    $ . env3/bin/activate
+    $ pip install -r test_requirements.txt
+    $ export PYTHONPATH=`pwd`
+    $ nosetests -s -v --with-coverage --cover-package=restless --cover-html tests
+
+For Python 2::
+
+    $ virtualenv env2
+    $ . env2/bin/activate
+    $ pip install -r test_requirements.txt
+    $ export PYTHONPATH=`pwd`
+    $ nosetests -s -v --with-coverage --cover-package=restless --cover-html tests
+
+Coverage is at about 94%, so please don't make it worse. :D
+
+
 TODO
 ====
 
 For v1.0.0, the following things need completing:
 
-* Finish the tests
 * Tutorial documentation
 * Extension documentation
-* API docs
+
+For v1.1.0, the following things need completing:
+
+* Working Flask tests (can't figure out the globals)
