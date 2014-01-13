@@ -41,14 +41,15 @@ Topics
 ======
 
 .. toctree::
+   :maxdepth: 1
 
    tutorial
    philosophy
+
+   cookbook
+
    contributing
    security
-
-.. toctree::
-   :maxdepth: 2
 
 
 API Reference
