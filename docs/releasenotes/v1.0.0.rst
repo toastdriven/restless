@@ -1,0 +1,6 @@
+restless v1.0.0
+===============
+
+:date: 2014-01-12
+
+Initial production-ready release! Whoo hoo!

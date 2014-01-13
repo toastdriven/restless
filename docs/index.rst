@@ -1,16 +1,71 @@
-.. restless documentation master file, created by
-   sphinx-quickstart on Sat Jan 11 01:04:55 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+========
+restless
+========
 
-Welcome to restless's documentation!
-====================================
+A lightweight REST miniframework for Python.
 
-Contents:
+Works great with Django_ & Flask_, but should be useful for many other Python web
+frameworks. Based on the lessons learned from Tastypie_ & other REST libraries.
+
+.. _Django: http://djangoproject.com/
+.. _Flask: http://flask.pocoo.org/
+.. _Tastypie: http://tastypieapi.org/
+
+
+Features
+========
+
+* Small, fast codebase
+* JSON output by default, but overridable
+* RESTful
+* Python 3.3+ (with shims to make broke-ass Python 2.6+ work)
+* Flexible
+* Pagination
+
+
+Anti-Features
+=============
+
+(Things that will never be added...)
+
+* Automatic ORM integration
+* Authorization (per-object or not)
+* Extensive filtering options
+* XML output (though you can implement your own)
+* Metaclasses
+* Mixins
+* HATEOAS
+
+
+Topics
+======
+
+.. toctree::
+
+   tutorial
+   philosophy
+   contributing
+   security
 
 .. toctree::
    :maxdepth: 2
 
+
+API Reference
+=============
+
+.. toctree::
+   :glob:
+
+   reference/*
+
+
+Release Notes
+=============
+
+.. toctree::
+
+   releasenotes/v1.0.0
 
 
 Indices and tables

@@ -258,3 +258,8 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+# Blerg. The autodocs for the Django module freak out if this isn't done.
+from django.conf import settings
+settings.configure()
