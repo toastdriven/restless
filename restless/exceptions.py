@@ -1,9 +1,13 @@
+from .constants import APPLICATION_ERROR, UNAUTHORIZED, NOT_FOUND
+from .constants import METHOD_NOT_ALLOWED, METHOD_NOT_IMPLEMENTED
+
+
 class RestlessError(Exception):
     pass
 
 
 class HttpError(RestlessError):
-    status = 500
+    status = APPLICATION_ERROR
     msg = "Application Error"
 
     def __init__(self, msg=None):
@@ -14,20 +18,20 @@ class HttpError(RestlessError):
 
 
 class Unauthorized(HttpError):
-    status = 401
+    status = UNAUTHORIZED
     msg = "Unauthorized."
 
 
 class NotFound(HttpError):
-    status = 404
+    status = NOT_FOUND
     msg = "Resource not found."
 
 
 class MethodNotAllowed(HttpError):
-    status = 405
+    status = METHOD_NOT_ALLOWED
     msg = "The specified HTTP method is not allowed."
 
 
 class MethodNotImplemented(HttpError):
-    status = 501
+    status = METHOD_NOT_IMPLEMENTED
     msg = "The specified HTTP method is not implemented."
