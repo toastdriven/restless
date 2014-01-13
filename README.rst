@@ -2,6 +2,9 @@
 restless
 ========
 
+.. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
+        :target: https://travis-ci.org/toastdriven/restless
+
 A lightweight REST miniframework for Python.
 
 Works great with Django & Flask, but should be useful for many other Python web
@@ -86,7 +89,7 @@ Example code::
             return Post.objects.get(id=pk)
 
         # POST /
-        def create(self, data):
+        def create(self):
             return Post.objects.create(
                 title=self.data['title'],
                 user=User.objects.get(username=self.data['author']),
@@ -113,15 +116,14 @@ Example code::
 Hooking it up::
 
     # api/urls.py
-    from django.conf.urls.default import url, patterns
+    from django.conf.urls.default import url, patterns, include
 
     from posts.api import PostResource
 
     urlpatterns = patterns('',
         # The usual suspects, then...
 
-        url(r'^posts/$', PostResource.as_list(), name='api_posts_list'),
-        url(r'^posts/(?P<pk>\d+)/$', PostResource.as_detail(), name='api_posts_detail'),
+        url(r'^api/posts/', include(PostResource.urls())),
     )
 
 
@@ -156,11 +158,7 @@ Coverage is at about 94%, so please don't make it worse. :D
 TODO
 ====
 
-For v1.0.0, the following things need completing:
-
-* Tutorial documentation
-* Extension documentation
-
 For v1.1.0, the following things need completing:
 
 * Working Flask tests (can't figure out the globals)
+* Extension documentation
