@@ -7,6 +7,12 @@ from .resources import Resource
 
 
 class DjangoResource(Resource):
+    """
+    A Django-specific ``Resource`` subclass.
+
+    Doesn't require any special configuration, but helps when working in a
+    Django environment.
+    """
     # Because Django.
     @classmethod
     def as_list(self, *args, **kwargs):
@@ -28,6 +34,19 @@ class DjangoResource(Resource):
 
     @classmethod
     def urls(cls, name_prefix=None):
+        """
+        A convenience method for hooking up the URLs.
+
+        This automatically adds a list & a detail endpoint to your URLconf.
+
+        :param name_prefix: (Optional) A prefix for the URL's name (for
+            resolving). The default is ``None``, which will autocreate a prefix
+            based on the class name. Ex: ``BlogPostResource`` ->
+            ``api_blog_post_list``
+        :type name_prefix: string
+
+        :returns: A ``patterns`` object for ``include(...)``
+        """
         if name_prefix is None:
             name_prefix = 'api_{0}'.format(
                 cls.__name__.replace('Resource', '').lower()

@@ -3,10 +3,27 @@ from .constants import METHOD_NOT_ALLOWED, METHOD_NOT_IMPLEMENTED
 
 
 class RestlessError(Exception):
+    """
+    A common base exception from which all other exceptions in ``restless``
+    inherit from.
+
+    No special attributes or behaviors.
+    """
     pass
 
 
 class HttpError(RestlessError):
+    """
+    The foundational HTTP-related error.
+
+    All other HTTP errors in ``restless`` inherit from this one.
+
+    Has a ``status`` attribute. If present, ``restless`` will use this as the
+    ``status_code`` in the response.
+
+    Has a ``msg`` attribute. Has a reasonable default message (override-able
+    from the constructor).
+    """
     status = APPLICATION_ERROR
     msg = "Application Error"
 
