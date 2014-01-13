@@ -13,6 +13,10 @@ different web frameworks. If you're interested in more of the backstory &
 reasoning behind Restless, please have a gander at the :ref:`philosophy`
 documentation.
 
+You can find some complete example implementation code in `the repository`_.
+
+.. _`the repository`: https://github.com/toastdriven/restless/tree/master/examples
+
 
 Why Restless?
 =============
@@ -70,6 +74,9 @@ There are only two steps to getting a Restless API up & functional. They are:
 #. Hook up the resource to your URLs
 
 We'll start with defining the resource subclass.
+
+.. _Django: http://djangoproject.com/
+.. _Flask: http://flask.pocoo.org/
 
 
 Creating a Resource

@@ -47,7 +47,7 @@ want/need in a flexible/overridable manner.
 But in reality, all I really ever personally want are the RESTful verbs, JSON
 serialization & the ability of override behavior.
 
-This one is written for me.
+This one is written for me, but maybe it's useful to you.
 
 
 Manifesto
@@ -137,7 +137,6 @@ TODO
 For v1.0.0, the following things need completing:
 
 * Finish the tests
-* Docstrings everywhere
 * Tutorial documentation
 * Extension documentation
 * API docs
