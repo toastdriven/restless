@@ -46,6 +46,7 @@ Topics
    tutorial
    philosophy
 
+   extending
    cookbook
 
    contributing
