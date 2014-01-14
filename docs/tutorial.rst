@@ -403,7 +403,7 @@ Note that the ``create`` & ``update`` methods are both using a special
 ``self.data`` variable. This is created by Restless during deserialization &
 is the **JSON** data the user sends as part of the request.
 
-.. warning:
+.. warning::
 
     This data (within ``self.data``) is mostly unsanitized (beyond standard
     JSON decoding) & could contain anything (not just the ``fields`` you
