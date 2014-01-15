@@ -42,12 +42,16 @@ Topics
 ======
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    tutorial
    philosophy
 
    extending
+
+.. toctree::
+   :maxdepth: 1
+
    cookbook
 
    contributing
