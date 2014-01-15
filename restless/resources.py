@@ -252,6 +252,40 @@ class Resource(object):
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
         return self.build_response(serialized, status=status)
 
+    def raw_deserialize(self, body):
+        """
+        The low-level deserialization.
+
+        Underpins ``deserialize``, ``deserialize_list`` &
+        ``deserialize_detail``.
+
+        Has no built-in smarts, simply loads the JSON.
+
+        :param body: The body of the current request
+        :type body: string
+
+        :returns: The deserialized data
+        :rtype: ``list`` or ``dict``
+        """
+        return json.loads(body)
+
+    def raw_serialize(self, data):
+        """
+        The low-level serialization.
+
+        Underpins ``serialize``, ``serialize_list`` &
+        ``serialize_detail``.
+
+        Has no built-in smarts, simply dumps the JSON.
+
+        :param data: The body for the response
+        :type data: string
+
+        :returns: A serialized version of the data
+        :rtype: string
+        """
+        return json.dumps(data, cls=MoreTypesJSONEncoder)
+
     def deserialize(self, method, endpoint, body):
         """
         A convenience method for deserializing the body of a request.
@@ -286,7 +320,7 @@ class Resource(object):
         :returns: The deserialized body or an empty ``list``
         """
         if body:
-            return json.loads(body)
+            return self.raw_deserialize(body)
 
         return []
 
@@ -300,7 +334,7 @@ class Resource(object):
         :returns: The deserialized body or an empty ``dict``
         """
         if body:
-            return json.loads(body)
+            return self.raw_deserialize(body)
 
         return {}
 
@@ -317,7 +351,7 @@ class Resource(object):
         :param endpoint: The endpoint style (``list`` or ``detail``)
         :type endpoint: string
 
-        :param data: The body of the current request
+        :param data: The body for the response
         :type data: string
 
         :returns: A serialized version of the data
@@ -350,7 +384,7 @@ class Resource(object):
 
         prepped_data = [self.prepare(item) for item in data]
         final_data = self.wrap_list_response(prepped_data)
-        return json.dumps(final_data, cls=MoreTypesJSONEncoder)
+        return self.raw_serialize(final_data)
 
     def serialize_detail(self, data):
         """
@@ -369,7 +403,7 @@ class Resource(object):
             return ''
 
         final_data = self.prepare(data)
-        return json.dumps(final_data, cls=MoreTypesJSONEncoder)
+        return self.raw_serialize(final_data)
 
     def prepare(self, data):
         """

@@ -123,6 +123,33 @@ class ResourceTestCase(unittest.TestCase):
     def test_is_debug(self):
         self.assertFalse(self.res.is_debug())
 
+    def test_raw_deserialize(self):
+        body = '{"title": "Hitchhiker\'s Guide To The Galaxy", "author": "Douglas Adams"}'
+        self.assertEqual(self.res.raw_deserialize(body), {
+            'author': 'Douglas Adams',
+            'title': "Hitchhiker's Guide To The Galaxy",
+        })
+
+    def test_raw_serialize(self):
+        # This isn't very unit-y, but we're also testing that we're using the
+        # right JSON encoder & that it can handle other data types.
+        data = {
+            'title': 'Cosmos',
+            'author': 'Carl Sagan',
+            'short_desc': 'A journey through the stars by an emminent astrophysist.',
+            'pub_date': datetime.date(1980, 10, 5),
+            'price': decimal.Decimal('17.99'),
+        }
+        res = self.res.raw_serialize(data)
+        # Note the keys **don't** get remapped here.
+        self.assertEqual(json.loads(res), {
+            'author': 'Carl Sagan',
+            'price': '17.99',
+            'pub_date': '1980-10-05',
+            'short_desc': 'A journey through the stars by an emminent astrophysist.',
+            'title': 'Cosmos'
+        })
+
     def test_deserialize(self):
         list_body = '["one", "three", "two"]'
         self.assertEqual(self.res.deserialize('POST', 'list', list_body), [
@@ -214,22 +241,16 @@ class ResourceTestCase(unittest.TestCase):
             'title': 'Cosmos',
             'author': 'Carl Sagan',
             'short_desc': 'A journey through the stars by an emminent astrophysist.',
-            'pub_date': datetime.date(1980, 10, 5),
-            'price': decimal.Decimal('17.99'),
         }
 
         self.res.fields = {
             'title': 'title',
             'author': 'author',
             'synopsis': 'short_desc',
-            'published': 'pub_date',
-            'price': 'price',
         }
         res = self.res.serialize_detail(data)
         self.assertEqual(json.loads(res), {
             'author': 'Carl Sagan',
-            'price': '17.99',
-            'published': '1980-10-05',
             'synopsis': 'A journey through the stars by an emminent astrophysist.',
             'title': 'Cosmos'
         })
