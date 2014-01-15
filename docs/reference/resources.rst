@@ -26,3 +26,11 @@ restless.fl
 .. automodule:: restless.fl
    :members:
    :undoc-members:
+
+
+restless.pyr
+------------
+
+.. automodule:: restless.pyr
+   :members:
+   :undoc-members:
