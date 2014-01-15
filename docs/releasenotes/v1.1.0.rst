@@ -1,0 +1,25 @@
+restless v1.1.0
+===============
+
+:date: 2014-01-14
+
+This release adds Pyramid support, easier-to-override serialization, more
+documentation & fixed Flask tests/``is_debug``.
+
+
+Features
+========
+
+* Added support for Pyramid (``restless.pyr.PyramidResource``). Thanks to
+  binarydud for the patch! (SHA: 27e343e)
+* Added the ``Resource.raw_deserialize`` & ``Resource.raw_serialize`` methods
+  to make changing the serialization format more DRY/easier. (SHA: 9d68aa5)
+* Added more documentation on how to extend Restless. (SHA: 0be1346 &
+  SHA: 730dde1)
+
+
+Bugfixes
+========
+
+* Fixed the Flask tests to no longer be skipped. (SHA: 89d2bc7)
+* Fixed ``FlaskResource.is_debug`` to now do the correct lookup. (SHA: 89d2bc7)

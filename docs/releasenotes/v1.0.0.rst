@@ -4,3 +4,11 @@ restless v1.0.0
 :date: 2014-01-12
 
 Initial production-ready release! Whoo hoo!
+
+Includes:
+
+* Full GET/CREATE/UPDATE/DELETE
+* Django support
+* Flask support
+* Real, live docs
+* OMG Tests Like Wow
