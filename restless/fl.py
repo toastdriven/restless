@@ -41,8 +41,8 @@ class FlaskResource(Resource):
         return self.request.data
 
     def is_debug(self):
-        from flask import g
-        return g.get('debug')
+        from flask import current_app
+        return current_app.debug
 
     def build_response(self, data, status=200):
         return make_response(data, status, {

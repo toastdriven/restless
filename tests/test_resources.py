@@ -422,7 +422,8 @@ class DjangoResourceTestCase(unittest.TestCase):
                 {
                     'author': 'daniel',
                     'body': "G'bye!",
-                    'id': 5, 'title': 'Last'
+                    'id': 5,
+                    'title': 'Last'
                 }
             ]
         })
@@ -526,76 +527,77 @@ class FlaskResourceTestCase(unittest.TestCase):
 
         self.app = flask.Flask('test_restless')
         self.app.config['DEBUG'] = True
-        # The Flask testing docs talk about this, but I can't get it to work.
-        # Help please?
-        # self.app = app.test_client()
 
         # Just for the fake data.
         self.res.fake_init()
 
-    @unittest.skipIf(True, "Flask tests are broken & I'm not an expert on how to get the globals cooperating. :(")
     def test_as_list(self):
         list_endpoint = FlTestResource.as_list()
         flask.request = FakeHttpRequest('GET')
 
-        resp = list_endpoint()
-        self.assertEqual(resp['Content-Type'], 'application/json')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(json.loads(resp.content.decode('utf-8')), {
-            'objects': [
-                {
-                    'author': 'daniel',
-                    'body': 'Hello world!',
-                    'id': 2,
-                    'title': 'First post'
-                },
-                {
-                    'author': 'daniel',
-                    'body': 'Stuff here.',
-                    'id': 4,
-                    'title': 'Another'
-                },
-                {
-                    'author': 'daniel',
-                    'body': "G'bye!",
-                    'id': 5, 'title': 'Last'
-                }
-            ]
-        })
+        with self.app.test_request_context('/whatever/', method='GET'):
+            resp = list_endpoint()
+            self.assertEqual(resp.headers['Content-Type'], 'application/json')
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(json.loads(resp.data.decode('utf-8')), {
+                'objects': [
+                    {
+                        'id': 2,
+                        'title': 'First post'
+                    },
+                    {
+                        'id': 4,
+                        'title': 'Another'
+                    },
+                    {
+                        'id': 5,
+                        'title': 'Last'
+                    }
+                ]
+            })
 
-    @unittest.skipIf(True, "Flask tests are broken & I'm not an expert on how to get the globals cooperating. :(")
     def test_as_detail(self):
         detail_endpoint = FlTestResource.as_detail()
         flask.request = FakeHttpRequest('GET')
 
-        resp = detail_endpoint(4)
-        self.assertEqual(resp['Content-Type'], 'application/json')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(json.loads(resp.content.decode('utf-8')), {
-            'author': 'daniel',
-            'body': 'Stuff here.',
-            'id': 4,
-            'title': 'Another'
-        })
+        with self.app.test_request_context('/whatever/', method='GET'):
+            resp = detail_endpoint(4)
+            self.assertEqual(resp.headers['Content-Type'], 'application/json')
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(json.loads(resp.data.decode('utf-8')), {
+                'id': 4,
+                'title': 'Another'
+            })
 
-    @unittest.skipIf(True, "Flask tests are broken & I'm not an expert on how to get the globals cooperating. :(")
+    def test_is_debug(self):
+        with self.app.test_request_context('/whatever/', method='GET'):
+            self.assertTrue(self.res.is_debug())
+
+        with self.app.test_request_context('/whatever/', method='GET'):
+            self.app.debug = False
+            # This should do the correct lookup.
+            self.assertFalse(self.res.is_debug())
+
     def test_build_response(self):
-        resp = self.res.build_response('Hello, world!', status=302)
-        self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.headers['Content-Type'], 302)
-        self.assertEqual(resp.read(), 'Hello, world!')
+        with self.app.test_request_context('/whatever/', method='GET'):
+            resp = self.res.build_response('Hello, world!', status=302)
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.headers['Content-Type'], 'application/json')
+            self.assertEqual(resp.data.decode('utf-8'), 'Hello, world!')
 
-    @unittest.skipIf(True, "Flask tests are broken & I'm not an expert on how to get the globals cooperating. :(")
     def test_add_url_rules(self):
-        FlTestResource.add_url_rules(self.app, '/api/')
-        self.assertEqual(len(self.app.url_map), 2)
-        self.assertEqual(patterns[0].name, 'api_djtest_list')
-        self.assertEqual(patterns[1].name, 'api_djtest_detail')
+        with self.app.test_request_context('/whatever/', method='GET'):
+            FlTestResource.add_url_rules(self.app, '/api/')
+            rules = sorted([rule.endpoint for rule in self.app.url_map.iter_rules()])
+            self.assertEqual(len(rules), 3)
+            self.assertEqual(rules[0], 'api_fltest_detail')
+            self.assertEqual(rules[1], 'api_fltest_list')
 
-        FlTestResource.add_url_rules(self.app, '/api/', endpoint_prefix='v2_tests')
-        self.assertEqual(len(patterns), 2)
-        self.assertEqual(patterns[0].name, 'v2_tests_list')
-        self.assertEqual(patterns[1].name, 'v2_tests_detail')
+            FlTestResource.add_url_rules(self.app, '/api/', endpoint_prefix='v2_tests')
+            rules = sorted([rule.endpoint for rule in self.app.url_map.iter_rules()])
+            self.assertEqual(len(rules), 5)
+            self.assertEqual(rules[3], 'v2_tests_detail')
+            self.assertEqual(rules[4], 'v2_tests_list')
 
 class PyrTestResource(PyramidResource):
     fake_db = []
