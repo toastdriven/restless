@@ -7,6 +7,8 @@ restless
 
 A lightweight REST miniframework for Python.
 
+Documentation is at http://restless.readthedocs.org/.
+
 Works great with Django, Flask & Pyramid, but should be useful for many other
 Python web frameworks. Based on the lessons learned from Tastypie_ & other REST
 libraries.
@@ -22,7 +24,6 @@ Features
 * RESTful
 * Python 3.3+ (with shims to make broke-ass Python 2.6+ work)
 * Flexible
-* Pagination
 
 
 Anti-Features
@@ -154,11 +155,3 @@ For Python 2::
     $ nosetests -s -v --with-coverage --cover-package=restless --cover-html tests
 
 Coverage is at about 94%, so please don't make it worse. :D
-
-
-TODO
-====
-
-For v1.1.0, the following things need completing:
-
-* Working Flask tests (can't figure out the globals)

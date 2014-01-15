@@ -21,7 +21,6 @@ Features
 * RESTful
 * Python 3.3+ (with shims to make broke-ass Python 2.6+ work)
 * Flexible
-* Pagination
 
 
 Anti-Features
