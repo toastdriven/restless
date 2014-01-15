@@ -4,11 +4,12 @@ restless
 
 A lightweight REST miniframework for Python.
 
-Works great with Django_ & Flask_, but should be useful for many other Python web
+Works great with Django_, Flask_ & Pyramid_, but should be useful for many other Python web
 frameworks. Based on the lessons learned from Tastypie_ & other REST libraries.
 
 .. _Django: http://djangoproject.com/
 .. _Flask: http://flask.pocoo.org/
+.. _Pyramid: http://www.pylonsproject.org/
 .. _Tastypie: http://tastypieapi.org/
 
 
