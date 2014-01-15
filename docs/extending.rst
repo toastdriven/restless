@@ -180,3 +180,167 @@ construction easier. For example::
                 'body': post.content,
                 # ...
             }
+
+
+Data Validation
+===============
+
+Validation can be a contentious issue. No one wants to risk data corruption
+or security holes in their services. However, there's no real standard or
+consensus on doing data validation even within the **individual** framework
+communities themselves, let alone *between* frameworks.
+
+So unfortunately, Restless mostly ignores this issue, leaving you to do data
+validation the way you think is best.
+
+The good news is that the data you'll need to validate is already in a
+convenient-to-work-with dictionary called ``Resource.data`` (assigned
+immediately after deserialization takes place).
+
+The recommended approach is to simply add on to your data methods themselves.
+For example, since Django ``Form`` objects are at least *bundled* with the
+framework, we'll use those as an example...::
+
+    from django.forms import ModelForm
+
+    from restless.dj import DjangoResource
+    from restless.exceptions import HttpError
+
+
+    class UserForm(ModelForm):
+        class Meta(object):
+            model = User
+            fields = ['username', 'first_name', 'last_name', 'email']
+
+
+    class UserResource(DjangoResource):
+        def create(self):
+            # We can create a bound form from the get-go.
+            form = UserForm(self.data)
+
+            if not form.is_valid():
+                raise HttpError("You're a bad person & you should feel bad.")
+
+            # Continue as normal, using the form data instead.
+            user = User.objects.create(
+                username=form.cleaned_data['username'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+            )
+            return user
+
+If you're going to use this validation in other places, you're welcome to DRY
+up your code into a validation method. An example of this might look like...::
+
+    from django.forms import ModelForm
+
+    from restless.dj import DjangoResource
+    from restless.exceptions import HttpError
+
+
+    class UserForm(ModelForm):
+        class Meta(object):
+            model = User
+            fields = ['username', 'first_name', 'last_name', 'email']
+
+
+    class UserResource(DjangoResource):
+        def validate_user(self):
+            form = UserForm(self.data)
+
+            if not form.is_valid():
+                raise HttpError("You're a bad person & you should feel bad.")
+
+            return form.cleaned_data
+
+        def create(self):
+            cleaned = self.validate_user()
+            user = User.objects.create(
+                username=cleaned['username'],
+                first_name=cleaned['first_name'],
+                last_name=cleaned['last_name'],
+                email=cleaned['email'],
+            )
+            return user
+
+        def update(self, pk):
+            cleaned = self.validate_user()
+            user = User.objects.get(pk=pk)
+            user.username = cleaned['username']
+            user.first_name = cleaned['first_name']
+            user.last_name = cleaned['last_name']
+            user.email = cleaned['email']
+            user.save()
+            return user
+
+
+Alternative Serialization
+=========================
+
+For some, Restless' JSON-only syntax might not be appealing. Fortunately,
+overriding this is not terribly difficult.
+
+For the purposes of demonstration, we'll implement YAML in place of JSON.
+The process would be similar (but much more verbose) for XML (& brings
+`a host of problems`_ as well).
+
+Start by creating a subclass specifically for serialization. We'll override
+a couple methods there, then all your actual API classes can inherit from it.::
+
+    import yaml
+
+    from restless import Resource
+
+
+    class YAMLResource(Resource):
+        def raw_deserialize(self, body):
+            # Do **NOT** use ``yaml.load`` here, as it can contain things like
+            # *functions* & other dangers!
+            return yaml.safe_load(body)
+
+        def raw_serialize(self, data):
+            return yaml.dump(data)
+
+Once those methods are implemented, it's just a matter of changing the
+inheritance on your classes.::
+
+    # Old.
+    class MyResource(Resource):
+        # ...
+
+    # New.
+    class MyResource(YAMLResource):
+        # ...
+
+You can even do things like handle multiple serialization formats, say if the
+user provides a ``?format=yaml`` GET param...::
+
+    from restless import Resource
+    from restless.utils import json, MoreTypesJSONEncoder
+
+    from django.template import Context, Template
+
+
+    class MultiSerializeResource(Resource):
+        def raw_deserialize(self, body):
+            # This is Django-specific, but all frameworks can handle GET
+            # parameters...
+            ct = request.GET.get('format', 'json')
+
+            if ct == 'yaml':
+                return yaml.safe_load(body)
+            else:
+                return json.load(body)
+
+        def raw_serialize(self, data):
+            # Again, Django-specific.
+            ct = request.GET.get('format', 'json')
+
+            if ct == 'yaml':
+                return yaml.dump(body)
+            else:
+                return json.dumps(body, cls=MoreTypesJSONEncoder)
+
+.. _`a host of problems`: https://pypi.python.org/pypi/defusedxml
+

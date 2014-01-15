@@ -161,4 +161,3 @@ TODO
 For v1.1.0, the following things need completing:
 
 * Working Flask tests (can't figure out the globals)
-* Extension documentation

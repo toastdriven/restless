@@ -415,6 +415,9 @@ is the **JSON** data the user sends as part of the request.
     Some people like cleaning the data with ``Forms``, others prefer to
     hand-sanitize, some do model validation, etc. Do what works best for you.
 
+    You can refer to the :ref:`extending` documentation for recommended
+    approaches.
+
 Also note that ``delete`` is the first method with **no return value**. You
 can do the same thing on ``create/update`` if you like. When there's no
 meaningful data returned, Restless simply sends back a correct status code
