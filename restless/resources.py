@@ -63,6 +63,7 @@ class Resource(object):
         self.request = None
         self.data = None
         self.status = 200
+        self.prepare_data = self.init_kwargs.pop('prepare_data', True)
 
     @classmethod
     def as_list(cls, *init_args, **init_kwargs):
@@ -79,14 +80,7 @@ class Resource(object):
 
         :returns: View function
         """
-        def _wrapper(request, *args, **kwargs):
-            # Make a new instance so that no state potentially leaks between
-            # instances.
-            inst = cls(*init_args, **init_kwargs)
-            inst.request = request
-            return inst.handle('list', *args, **kwargs)
-
-        return _wrapper
+        return cls.as_view('list', *init_args, **init_kwargs)
 
     @classmethod
     def as_detail(cls, *init_args, **init_kwargs):
@@ -103,12 +97,32 @@ class Resource(object):
 
         :returns: View function
         """
+        return cls.as_view('detail', *init_args, **init_kwargs)
+
+    @classmethod
+    def as_view(cls, view_type, *init_args, **init_kwargs):
+        """
+        Used for hooking up the all endpoints (including custom ones), this
+        returns a wrapper function that creates a new instance of the resource
+        class & calls the correct view method for it.
+
+        :param view_type: Should be one of ``list``, ``detail`` or ``custom``.
+        :type view_type: string
+
+        :param init_args: (Optional) Positional params to be persisted along
+            for instantiating the class itself.
+
+        :param init_kwargs: (Optional) Keyword params to be persisted along
+            for instantiating the class itself.
+
+        :returns: View function
+        """
         def _wrapper(request, *args, **kwargs):
             # Make a new instance so that no state potentially leaks between
             # instances.
             inst = cls(*init_args, **init_kwargs)
             inst.request = request
-            return inst.handle('detail', *args, **kwargs)
+            return inst.handle(view_type, *args, **kwargs)
 
         return _wrapper
 
@@ -370,8 +384,8 @@ class Resource(object):
         """
         Given a collection of data (``objects`` or ``dicts``), serializes them.
 
-        This will call ``prepare`` for each item, to optionally reshape the
-        output.
+        If ``self.prepare_data`` is ``True`` (the default), this will call
+        ``prepare`` for each item, to optionally reshape the output.
 
         :param data: The collection of items to serialize
         :type data: list or iterable
@@ -382,7 +396,11 @@ class Resource(object):
         if data is None:
             return ''
 
-        prepped_data = [self.prepare(item) for item in data]
+        if self.prepare_data:
+            prepped_data = [self.prepare(item) for item in data]
+        else:
+            prepped_data = data
+
         final_data = self.wrap_list_response(prepped_data)
         return self.raw_serialize(final_data)
 
@@ -390,8 +408,8 @@ class Resource(object):
         """
         Given a single item (``object`` or ``dict``), serializes it.
 
-        This will call ``prepare`` on the item, to optionally reshape the
-        output.
+        If ``self.prepare_data`` is ``True`` (the default), this will call
+        ``prepare`` on the item, to optionally reshape the output.
 
         :param data: The item to serialize
         :type data: object or dict
@@ -402,7 +420,11 @@ class Resource(object):
         if data is None:
             return ''
 
-        final_data = self.prepare(data)
+        if self.prepare_data:
+            final_data = self.prepare(data)
+        else:
+            final_data = data
+
         return self.raw_serialize(final_data)
 
     def prepare(self, data):

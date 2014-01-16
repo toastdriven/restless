@@ -12,9 +12,128 @@ give you, the expert on your API, the freedom to build what you need.
 
 We'll be covering:
 
+* Custom endpoints
 * Customizing data output
 * Adding data validation
 * Providing different serialization formats
+
+
+Custom Endpoints
+================
+
+Sometimes you need to provide more than just the typical HTTP verbs. Restless
+allows you to hook up custom endpoints that can take advantage of much of the
+``Resource``.
+
+Implementing these views requires a couple simple steps:
+
+* Writing the method
+* Adding to the ``Resource.http_methods`` mapping
+* Adding to your URL routing
+
+For instance, if you wanted to added a schema view (``/api/posts/schema/``)
+that responded to ``GET`` requests, you'd first write the method::
+
+    from restless.dj import DjangoResource
+
+
+    class PostResource(DjangoResource):
+        # The usual methods, then...
+
+        def schema(self):
+            # Return your schema information.
+            # We're keeping it simple (basic field names & data types).
+            return {
+                'fields': {
+                    'id': 'integer',
+                    'title': 'string',
+                    'author': 'string',
+                    'body': 'string',
+                },
+            }
+
+The next step is to update the :py:attr:`Resource.http_methods`. This can
+either be fully written out in your class or (as I prefer) a small extension
+to your ``__init__``...::
+
+    from restless.dj import DjangoResource
+
+
+    class PostResource(DjangoResource):
+        # We'll lightly extend the ``__init__``.
+        def __init__(self, *args, **kwargs):
+            super(PostResource, self).__init__(*args, **kwargs)
+
+            # Add on a new top-level key, then define what HTTP methods it
+            # listens on & what methods it calls for them.
+            self.http_methods.update({
+                'schema': {
+                    'GET': 'schema',
+                }
+            })
+
+        # The usual methods, then...
+
+        def schema(self):
+            return {
+                'fields': {
+                    'id': 'integer',
+                    'title': 'string',
+                    'author': 'string',
+                    'body': 'string',
+                },
+            }
+
+Finally, it's just a matter of hooking up the URLs as well. You can do this
+manually or (once again) by extending a built-in method.::
+
+    # Add the correct import here.
+    from django.conf.urls import patterns, url
+
+    from restless.dj import DjangoResource
+
+
+    class PostResource(DjangoResource):
+        def __init__(self, *args, **kwargs):
+            super(PostResource, self).__init__(*args, **kwargs)
+            self.http_methods.update({
+                'schema': {
+                    'GET': 'schema',
+                }
+            })
+
+        # The usual methods, then...
+
+        def schema(self):
+            return {
+                'fields': {
+                    'id': 'integer',
+                    'title': 'string',
+                    'author': 'string',
+                    'body': 'string',
+                },
+            }
+
+        # Finally, extend the URLs.
+        @classmethod
+        def urls(cls, name_prefix=None):
+            urlpatterns = super(PostResource, cls).urls(cls, name_prefix=name_prefix)
+            return urlpatterns + patterns('',
+                # Note: We pass ``prepare_data=False`` here so that Restless
+                # doesn't run ``prepare`` on the schema data.
+                # If your custom view returns a typical ``object/dict`` (like
+                # the ``detail`` method), you can omit this.
+                url(r'^schema/$', cls.as_view('schema', prepare_data=False), name=cls.build_url_name('schema', name_prefix)),
+            )
+
+.. note::
+
+    This step varies from framework to framework. The code is specific to the
+    :py:class:`restless.dj.DjangoResource`, but the approach is the same
+    regardless.
+
+You should now be able to hit something like http://127.0.0.1/api/posts/schema/
+in your browser & get a JSON schema view!
 
 
 Customizing Data Output

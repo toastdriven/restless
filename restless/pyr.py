@@ -31,6 +31,32 @@ class PyramidResource(Resource):
         return resp
 
     @classmethod
+    def build_routename(cls, name, routename_prefix=None):
+        """
+        Given a ``name`` & an optional ``routename_prefix``, this generates a
+        name for a URL.
+
+        :param name: The name for the URL (ex. 'detail')
+        :type name: string
+
+        :param routename_prefix: (Optional) A prefix for the URL's name (for
+            resolving). The default is ``None``, which will autocreate a prefix
+            based on the class name. Ex: ``BlogPostResource`` ->
+            ``api_blog_post_list``
+        :type routename_prefix: string
+
+        :returns: The final name
+        :rtype: string
+        """
+        if routename_prefix is None:
+            routename_prefix = 'api_{0}'.format(
+                cls.__name__.replace('Resource', '').lower()
+            )
+
+        routename_prefix = routename_prefix.rstrip('_')
+        return '_'.join([routename_prefix, name])
+
+    @classmethod
     def add_views(cls, config, rule_prefix, routename_prefix=None):
         """
         A convenience method for registering the routes and views in pyramid.
@@ -51,27 +77,24 @@ class PyramidResource(Resource):
         :returns: ``pyramid.config.Configurator``
         """
         methods = ('GET', 'POST', 'PUT', 'DELETE')
-        if routename_prefix is None:
-            routename_prefix = 'api_{0}'.format(
-                cls.__name__.replace('Resource', '').lower()
-            )
+
         config.add_route(
-            routename_prefix + '_list',
+            cls.build_routename('list', routename_prefix),
             rule_prefix
         )
         config.add_view(
             cls.as_list(),
-            route_name=routename_prefix + '_list',
+            route_name=cls.build_routename('list', routename_prefix),
             request_method=methods
         )
 
         config.add_route(
-            routename_prefix + '_detail',
+            cls.build_routename('detail', routename_prefix),
             rule_prefix + '{name}/'
         )
         config.add_view(
             cls.as_detail(),
-            route_name=routename_prefix + '_detail',
+            route_name=cls.build_routename('detail', routename_prefix),
             request_method=methods
         )
         return config

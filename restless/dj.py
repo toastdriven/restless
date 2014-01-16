@@ -33,6 +33,32 @@ class DjangoResource(Resource):
         return resp
 
     @classmethod
+    def build_url_name(cls, name, name_prefix=None):
+        """
+        Given a ``name`` & an optional ``name_prefix``, this generates a name
+        for a URL.
+
+        :param name: The name for the URL (ex. 'detail')
+        :type name: string
+
+        :param name_prefix: (Optional) A prefix for the URL's name (for
+            resolving). The default is ``None``, which will autocreate a prefix
+            based on the class name. Ex: ``BlogPostResource`` ->
+            ``api_blog_post_list``
+        :type name_prefix: string
+
+        :returns: The final name
+        :rtype: string
+        """
+        if name_prefix is None:
+            name_prefix = 'api_{0}'.format(
+                cls.__name__.replace('Resource', '').lower()
+            )
+
+        name_prefix = name_prefix.rstrip('_')
+        return '_'.join([name_prefix, name])
+
+    @classmethod
     def urls(cls, name_prefix=None):
         """
         A convenience method for hooking up the URLs.
@@ -42,17 +68,12 @@ class DjangoResource(Resource):
         :param name_prefix: (Optional) A prefix for the URL's name (for
             resolving). The default is ``None``, which will autocreate a prefix
             based on the class name. Ex: ``BlogPostResource`` ->
-            ``api_blog_post_list``
+            ``api_blogpost_list``
         :type name_prefix: string
 
         :returns: A ``patterns`` object for ``include(...)``
         """
-        if name_prefix is None:
-            name_prefix = 'api_{0}'.format(
-                cls.__name__.replace('Resource', '').lower()
-            )
-
         return patterns('',
-            url(r'^$', cls.as_list(), name=name_prefix + '_list'),
-            url(r'^(?P<pk>\d+)/$', cls.as_detail(), name=name_prefix + '_detail'),
+            url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
+            url(r'^(?P<pk>\d+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
         )

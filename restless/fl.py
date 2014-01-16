@@ -50,6 +50,32 @@ class FlaskResource(Resource):
         })
 
     @classmethod
+    def build_endpoint_name(cls, name, endpoint_prefix=None):
+        """
+        Given a ``name`` & an optional ``endpoint_prefix``, this generates a name
+        for a URL.
+
+        :param name: The name for the URL (ex. 'detail')
+        :type name: string
+
+        :param endpoint_prefix: (Optional) A prefix for the URL's name (for
+            resolving). The default is ``None``, which will autocreate a prefix
+            based on the class name. Ex: ``BlogPostResource`` ->
+            ``api_blog_post_list``
+        :type endpoint_prefix: string
+
+        :returns: The final name
+        :rtype: string
+        """
+        if endpoint_prefix is None:
+            endpoint_prefix = 'api_{0}'.format(
+                cls.__name__.replace('Resource', '').lower()
+            )
+
+        endpoint_prefix = endpoint_prefix.rstrip('_')
+        return '_'.join([endpoint_prefix, name])
+
+    @classmethod
     def add_url_rules(cls, app, rule_prefix, endpoint_prefix=None):
         """
         A convenience method for hooking up the URLs.
@@ -72,20 +98,15 @@ class FlaskResource(Resource):
         """
         methods = ['GET', 'POST', 'PUT', 'DELETE']
 
-        if endpoint_prefix is None:
-            endpoint_prefix = 'api_{0}'.format(
-                cls.__name__.replace('Resource', '').lower()
-            )
-
         app.add_url_rule(
             rule_prefix,
-            endpoint=endpoint_prefix + '_list',
+            endpoint=cls.build_endpoint_name('list', endpoint_prefix),
             view_func=cls.as_list(),
             methods=methods
         )
         app.add_url_rule(
-            rule_prefix + '<username>/',
-            endpoint=endpoint_prefix + '_detail',
+            rule_prefix + '<pk>/',
+            endpoint=cls.build_endpoint_name('detail', endpoint_prefix),
             view_func=cls.as_detail(),
             methods=methods
         )

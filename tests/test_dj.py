@@ -20,6 +20,15 @@ class DjTestResource(DjangoResource):
     }
     fake_db = []
 
+    def __init__(self, *args, **kwargs):
+        super(DjTestResource, self).__init__(*args, **kwargs)
+
+        self.http_methods.update({
+            'schema': {
+                'GET': 'schema',
+            }
+        })
+
     def fake_init(self):
         # Just for testing.
         self.__class__.fake_db = [
@@ -56,6 +65,37 @@ class DjTestResource(DjangoResource):
 
     def create_detail(self):
         raise ValueError("This is a random & crazy exception.")
+
+    def schema(self):
+        # A WILD SCHEMA VIEW APPEARS!
+        return {
+            'fields': {
+                'id': {
+                    'type': 'integer',
+                    'required': True,
+                    'help_text': 'The unique id for the post',
+                },
+                'title': {
+                    'type': 'string',
+                    'required': True,
+                    'help_text': "The post's title",
+                },
+                'author': {
+                    'type': 'string',
+                    'required': True,
+                    'help_text': 'The username of the author of the post',
+                },
+                'body': {
+                    'type': 'string',
+                    'required': False,
+                    'default': '',
+                    'help_text': 'The content of the post',
+                }
+            },
+            'format': 'application/json',
+            'allowed_list_http_methods': ['GET', 'POST'],
+            'allowed_detail_http_methods': ['GET', 'PUT', 'DELETE'],
+        }
 
 
 class DjangoResourceTestCase(unittest.TestCase):
@@ -109,6 +149,27 @@ class DjangoResourceTestCase(unittest.TestCase):
             'title': 'Another'
         })
 
+    def test_as_view(self):
+        # This would be hooked up via the URLconf...
+        schema_endpoint = DjTestResource.as_view('schema', prepare_data=False)
+        req = FakeHttpRequest('GET')
+
+        resp = schema_endpoint(req)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 200)
+        schema = json.loads(resp.content.decode('utf-8'))
+        self.assertEqual(
+            sorted(list(schema['fields'].keys())),
+            [
+                'author',
+                'body',
+                'id',
+                'title',
+            ]
+        )
+        self.assertEqual(schema['fields']['id']['type'], 'integer')
+        self.assertEqual(schema['format'], 'application/json')
+
     def test_handle_not_implemented(self):
         self.res.request = FakeHttpRequest('TRACE')
 
@@ -134,6 +195,33 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': 'This is a random & crazy exception.'
         })
+
+    def test_build_url_name(self):
+        self.assertEqual(
+            DjTestResource.build_url_name('list'),
+            'api_djtest_list'
+        )
+        self.assertEqual(
+            DjTestResource.build_url_name('detail'),
+            'api_djtest_detail'
+        )
+        self.assertEqual(
+            DjTestResource.build_url_name('schema'),
+            'api_djtest_schema'
+        )
+
+        self.assertEqual(
+            DjTestResource.build_url_name('list', name_prefix='v2_'),
+            'v2_list'
+        )
+        self.assertEqual(
+            DjTestResource.build_url_name('detail', name_prefix='v2_'),
+            'v2_detail'
+        )
+        self.assertEqual(
+            DjTestResource.build_url_name('schema', name_prefix='v2_'),
+            'v2_schema'
+        )
 
     def test_urls(self):
         patterns = DjTestResource.urls()
