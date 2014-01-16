@@ -1,0 +1,20 @@
+restless v1.2.0
+===============
+
+:date: 2014-01-15
+
+**BACKWARD-INCOMPATIBLE:** This release alters the Pyramid ``add_views`` method
+signature slightly, to be more idiomatic. It changed from ``endpoint_prefix``
+to become ``routename_prefix``.
+
+Given that the Pyramid support was first released yesterday & this is an
+optional argument, the hope is the impact of this change is low. This should
+be (barring any security fixes) the only backward-incompatible change before
+v2.0.0.
+
+
+Bugfixes
+========
+
+* Altered the ``PyramidResource.add_views`` method signature, renaming the
+  ``endpoint_prefix`` to ``routename_prefix``. (SHA: 5a7edc8)

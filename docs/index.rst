@@ -71,6 +71,8 @@ Release Notes
 
 .. toctree::
 
+   releasenotes/v1.2.0
+   releasenotes/v1.1.0
    releasenotes/v1.0.0
 
 
