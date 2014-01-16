@@ -8,7 +8,7 @@ documentation & fixed Flask tests/``is_debug``.
 
 
 Features
-========
+--------
 
 * Added support for Pyramid (``restless.pyr.PyramidResource``). Thanks to
   binarydud for the patch! (SHA: 27e343e)
@@ -19,7 +19,7 @@ Features
 
 
 Bugfixes
-========
+--------
 
 * Fixed the Flask tests to no longer be skipped. (SHA: 89d2bc7)
 * Fixed ``FlaskResource.is_debug`` to now do the correct lookup. (SHA: 89d2bc7)

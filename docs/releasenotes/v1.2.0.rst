@@ -14,7 +14,7 @@ v2.0.0.
 
 
 Bugfixes
-========
+--------
 
 * Altered the ``PyramidResource.add_views`` method signature, renaming the
   ``endpoint_prefix`` to ``routename_prefix``. (SHA: 5a7edc8)
