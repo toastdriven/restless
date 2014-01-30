@@ -1,0 +1,13 @@
+restless v1.3.0
+===============
+
+:date: 2014-01-29
+
+This release adds support for Itty! This only works under Python 2.X for now,
+due to itty itself.
+
+
+Features
+--------
+
+* Added support for Itty. (SHA: 5cc4acd)
