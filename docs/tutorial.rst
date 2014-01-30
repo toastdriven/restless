@@ -63,7 +63,8 @@ Alternately, you can download the latest development source from Github::
 Getting Started
 ===============
 
-Restless currently supports Django_ & Flask_. For the purposes of most of this
+Restless currently supports Django_, Flask_, Pyramid_ & Itty_.
+For the purposes of most of this
 tutorial, we'll assume you're using Django. The process for developing &
 interacting with the API via Flask is nearly identical (& we'll be covering the
 differences at the end of this document).
@@ -78,6 +79,8 @@ behavior of the various `REST methods`_.
 
 .. _Django: http://djangoproject.com/
 .. _Flask: http://flask.pocoo.org/
+.. _Pyramid: http://www.pylonsproject.org/
+.. _Itty: https://pypi.python.org/pypi/itty
 .. _`REST methods`: http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_Web_Services
 
 

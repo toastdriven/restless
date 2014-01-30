@@ -9,9 +9,9 @@ A lightweight REST miniframework for Python.
 
 Documentation is at http://restless.readthedocs.org/.
 
-Works great with Django, Flask & Pyramid, but should be useful for many other
-Python web frameworks. Based on the lessons learned from Tastypie_ & other REST
-libraries.
+Works great with Django, Flask, Pyramid & Itty, but should be useful for many
+other Python web frameworks. Based on the lessons learned from Tastypie_ &
+other REST libraries.
 
 .. _Tastypie: http://tastypieapi.org/
 
