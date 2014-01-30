@@ -1,8 +1,12 @@
 import unittest
 
-import itty
+try:
+    import itty
+    from restless.it import IttyResource
+except ImportError:
+    itty = None
+    IttyResource = object
 
-from restless.it import IttyResource
 from restless.utils import json
 
 from .fakes import FakeHttpRequest
@@ -31,6 +35,7 @@ class ItTestResource(IttyResource):
         self.fake_db.append(self.data)
 
 
+@unittest.skipIf(not itty, "itty is not available")
 class IttyResourceTestCase(unittest.TestCase):
     def setUp(self):
         super(IttyResourceTestCase, self).setUp()
