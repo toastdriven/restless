@@ -1,0 +1,3 @@
+-r test_requirements.txt
+
+itty==0.8.2

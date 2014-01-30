@@ -6,7 +6,7 @@ python:
 
 # command to install dependencies
 install:
-    - pip install -r test_requirements.txt
+    - pip install -r test{$TRAVIS_PYTHON_VERSION:0:1}_requirements.txt
 
 # command to run tests
 script:
