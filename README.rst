@@ -146,16 +146,16 @@ Getting the tests running looks like::
 
     $ virtualenv -p python3 env3
     $ . env3/bin/activate
-    $ pip install -r test_requirements.txt
+    $ pip install -r test3_requirements.txt
     $ export PYTHONPATH=`pwd`
-    $ nosetests -s -v --with-coverage --cover-package=restless --cover-html tests
+    $ py.test -s -v --cov=restless --cov-report=html tests
 
 For Python 2::
 
     $ virtualenv env2
     $ . env2/bin/activate
-    $ pip install -r test_requirements.txt
+    $ pip install -r test2_requirements.txt
     $ export PYTHONPATH=`pwd`
-    $ nosetests -s -v --with-coverage --cover-package=restless --cover-html tests
+    $ py.test -s -v --cov=restless --cov-report=html tests
 
 Coverage is at about 94%, so please don't make it worse. :D

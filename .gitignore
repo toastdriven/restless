@@ -8,3 +8,4 @@ env3
 docs/_build
 tests/.coverage
 tests/cover
+tests/htmlcov
