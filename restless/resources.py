@@ -252,8 +252,7 @@ class Resource(object):
             if not self.is_authenticated():
                 raise Unauthorized()
 
-            body = self.request_body()
-            self.data = self.deserialize(method, endpoint, body)
+            self.data = self.deserialize(method, endpoint, self.request_body())
             view_method = getattr(self, self.http_methods[endpoint][method])
             data = view_method(*args, **kwargs)
             serialized = self.serialize(method, endpoint, data)
