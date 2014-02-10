@@ -183,6 +183,16 @@ class DjangoResourceTestCase(unittest.TestCase):
         with self.assertRaises(Unauthorized):
             self.res.handle('list')
 
+        # Now with DEBUG off.
+        settings.DEBUG = False
+        self.addCleanup(setattr, settings, 'DEBUG', True)
+        resp = self.res.handle('list')
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 401)
+        self.assertEqual(json.loads(resp.content.decode('utf-8')), {
+            'error': 'Unauthorized.',
+        })
+
     def test_handle_build_err(self):
         # Special-cased above for testing.
         self.res.request = FakeHttpRequest('POST')
