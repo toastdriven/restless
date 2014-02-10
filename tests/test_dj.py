@@ -1,5 +1,7 @@
 import unittest
 
+from django.core.exceptions import ObjectDoesNotExist
+
 # Ugh. Settings for Django.
 from django.conf import settings
 settings.configure(DEBUG=True)
@@ -50,6 +52,9 @@ class DjTestResource(DjangoResource):
         for item in self.fake_db:
             if item.id == pk:
                 return item
+
+        # If it wasn't found in our fake DB, raise a Django-esque exception.
+        raise ObjectDoesNotExist("Model with pk {0} not found.".format(pk))
 
     def create(self):
         self.fake_db.append(FakeModel(
@@ -204,6 +209,20 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 500)
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': 'This is a random & crazy exception.'
+        })
+
+    def test_object_does_not_exist(self):
+        # Make sure we get a proper Not Found exception rather than a
+        # generic 500.
+        self.res.request = FakeHttpRequest('GET')
+        settings.DEBUG = False
+        self.addCleanup(setattr, settings, 'DEBUG', True)
+
+        resp = self.res.handle('detail', 1001)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(json.loads(resp.content.decode('utf-8')), {
+            'error': 'Model with pk 1001 not found.'
         })
 
     def test_build_url_name(self):

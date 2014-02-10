@@ -1,8 +1,12 @@
+import six
+
 from django.conf import settings
 from django.conf.urls import patterns, url
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from .exceptions import NotFound
 from .resources import Resource
 
 
@@ -31,6 +35,13 @@ class DjangoResource(Resource):
         resp = HttpResponse(data, content_type='application/json')
         resp.status_code = status
         return resp
+
+    def build_error(self, err):
+        # A bit nicer behavior surrounding things that don't exist.
+        if isinstance(err, ObjectDoesNotExist):
+            err = NotFound(msg=six.text_type(err))
+
+        return super(DjangoResource, self).build_error(err)
 
     @classmethod
     def build_url_name(cls, name, name_prefix=None):
