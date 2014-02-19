@@ -1,5 +1,6 @@
 import unittest
 
+from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
 
 # Ugh. Settings for Django.
@@ -101,6 +102,16 @@ class DjTestResource(DjangoResource):
             'allowed_list_http_methods': ['GET', 'POST'],
             'allowed_detail_http_methods': ['GET', 'PUT', 'DELETE'],
         }
+
+
+class DjTestResourceHttp404Handling(DjTestResource):
+    def detail(self, pk):
+        for item in self.fake_db:
+            if item.id == pk:
+                return item
+
+        # If it wasn't found in our fake DB, raise a Django-esque exception.
+        raise Http404("Model with pk {0} not found.".format(pk))
 
 
 class DjangoResourceTestCase(unittest.TestCase):
@@ -213,12 +224,27 @@ class DjangoResourceTestCase(unittest.TestCase):
 
     def test_object_does_not_exist(self):
         # Make sure we get a proper Not Found exception rather than a
-        # generic 500.
+        # generic 500, when code raises a ObjectDoesNotExist exception.
         self.res.request = FakeHttpRequest('GET')
         settings.DEBUG = False
         self.addCleanup(setattr, settings, 'DEBUG', True)
 
         resp = self.res.handle('detail', 1001)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(json.loads(resp.content.decode('utf-8')), {
+            'error': 'Model with pk 1001 not found.'
+        })
+
+    def test_http404_exception_handling(self):
+        # Make sure we get a proper Not Found exception rather than a
+        # generic 500, when code raises a Http404 exception.
+        res = DjTestResourceHttp404Handling()
+        res.request = FakeHttpRequest('GET')
+        settings.DEBUG = False
+        self.addCleanup(setattr, settings, 'DEBUG', True)
+
+        resp = res.handle('detail', 1001)
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 404)
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
