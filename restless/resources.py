@@ -1,8 +1,9 @@
 import six
+import sys
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .exceptions import MethodNotImplemented, Unauthorized
-from .utils import json, lookup_data, MoreTypesJSONEncoder
+from .utils import json, lookup_data, MoreTypesJSONEncoder, format_traceback
 
 
 class Resource(object):
@@ -192,24 +193,44 @@ class Resource(object):
 
         :returns: A response object
         """
-        data = json.dumps({
+        data = {
             'error': six.text_type(err),
-        })
+        }
+
+        if self.is_debug():
+            # Add the traceback.
+            data['traceback'] = format_traceback(sys.exc_info())
+
+        body = self.raw_serialize(data)
         status = getattr(err, 'status', 500)
-        return self.build_response(data, status=status)
+        return self.build_response(body, status=status)
 
     def is_debug(self):
         """
         Controls whether or not the resource is in a debug environment.
 
-        If so, exceptions will be reraised instead of returning a serialized
-        response.
+        If so, tracebacks will be added to the serialized response.
 
         The default implementation simply returns ``False``, so if you're
         integrating with a new web framework, you'll need to override this
         method within your subclass.
 
         :returns: If the resource is in a debug environment
+        :rtype: boolean
+        """
+        return False
+
+    def bubble_exceptions(self):
+        """
+        Controls whether or not exceptions will be re-raised when encountered.
+
+        The default implementation returns ``False``, which means errors should
+        return a serialized response.
+
+        If you'd like exceptions to be re-raised, override this method & return
+        ``True``.
+
+        :returns: Whether exceptions should be re-raised or not
         :rtype: boolean
         """
         return False
@@ -257,13 +278,26 @@ class Resource(object):
             data = view_method(*args, **kwargs)
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
-            if self.is_debug():
-                raise
-
-            return self.build_error(err)
+            return self.handle_error(err)
 
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
         return self.build_response(serialized, status=status)
+
+    def handle_error(self, err):
+        """
+        When an exception is encountered, this generates a serialized error
+        message to return the user.
+
+        :param err: The exception seen. The message is exposed to the user, so
+            beware of sensitive data leaking.
+        :type err: Exception
+
+        :returns: A response object
+        """
+        if self.bubble_exceptions():
+            raise err
+
+        return self.build_error(err)
 
     def raw_deserialize(self, body):
         """

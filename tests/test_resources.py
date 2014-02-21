@@ -100,6 +100,9 @@ class ResourceTestCase(unittest.TestCase):
     def test_is_debug(self):
         self.assertFalse(self.res.is_debug())
 
+    def test_bubble_exceptions(self):
+        self.assertFalse(self.res.bubble_exceptions())
+
     def test_raw_deserialize(self):
         body = '{"title": "Hitchhiker\'s Guide To The Galaxy", "author": "Douglas Adams"}'
         self.assertEqual(self.res.raw_deserialize(body), {

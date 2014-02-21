@@ -189,15 +189,24 @@ class DjangoResourceTestCase(unittest.TestCase):
     def test_handle_not_implemented(self):
         self.res.request = FakeHttpRequest('TRACE')
 
-        with self.assertRaises(MethodNotImplemented):
-            self.res.handle('list')
+        resp = self.res.handle('list')
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 501)
+        resp_json = json.loads(resp.content.decode('utf-8'))
+        self.assertEqual(resp_json['error'], "Unsupported method 'TRACE' for list endpoint.")
+        self.assertTrue('traceback' in resp_json)
 
     def test_handle_not_authenticated(self):
         # Special-cased above for testing.
         self.res.request = FakeHttpRequest('DELETE')
 
-        with self.assertRaises(Unauthorized):
-            self.res.handle('list')
+        # First with DEBUG on
+        resp = self.res.handle('list')
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 401)
+        resp_json = json.loads(resp.content.decode('utf-8'))
+        self.assertEqual(resp_json['error'], 'Unauthorized.')
+        self.assertTrue('traceback' in resp_json)
 
         # Now with DEBUG off.
         settings.DEBUG = False
@@ -205,9 +214,21 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('list')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 401)
-        self.assertEqual(json.loads(resp.content.decode('utf-8')), {
+        resp_json = json.loads(resp.content.decode('utf-8'))
+        self.assertEqual(resp_json, {
             'error': 'Unauthorized.',
         })
+        self.assertFalse('traceback' in resp_json)
+
+        # Last, with bubble_exceptions.
+        class Bubbly(DjTestResource):
+            def bubble_exceptions(self):
+                return True
+
+        with self.assertRaises(Unauthorized):
+            bubb = Bubbly()
+            bubb.request = FakeHttpRequest('DELETE')
+            bubb.handle('list')
 
     def test_handle_build_err(self):
         # Special-cased above for testing.

@@ -451,6 +451,56 @@ allowed by Restless. It's the only sane/safe default to have & it's very easy
 to fix.
 
 
+Error Handling
+==============
+
+By default, Restless tries to serialize any exceptions that may be encountered.
+What gets serialized depends on two methods: ``Resource.is_debug()`` &
+``Resource.bubble_exceptions()``.
+
+``is_debug``
+------------
+
+Regardless of the error type, the exception's message will get serialized into
+the response under the ``"error"`` key. For example, if an ``IOError`` is
+raised during processing, you'll get a response like::
+
+    HTTP/1.0 500 INTERNAL SERVER ERROR
+    Content-Type: application/json
+    # Other headers...
+
+    {
+        "error": "Whatever."
+    }
+
+If ``Resource.is_debug()`` returns ``True`` (the default is ``False``), Restless
+will also include a traceback. For example::
+
+    HTTP/1.0 500 INTERNAL SERVER ERROR
+    Content-Type: application/json
+    # Other headers...
+
+    {
+        "error": "Whatever.",
+        "traceback": "Traceback (most recent call last):\n # Typical traceback..."
+    }
+
+Each framework-specific ``Resource`` subclass implements ``is_debug()`` in a
+way most appropriate for the framework. In the case of the ``DjangoResource``,
+it returns ``settings.DEBUG``, allowing your resources to stay consistent with
+the rest of your application.
+
+``bubble_exceptions``
+---------------------
+
+If ``Resource.bubble_exceptions()`` returns ``True`` (the default is ``False``),
+any exception encountered will simply be re-raised & it's up to your setup to
+handle it. Typically, this behavior is undesirable except in development & with
+frameworks that can provide extra information/debugging on exceptions. Feel
+free to override it (``return True``) or implement application-specific logic
+if that meets your needs.
+
+
 Authentication
 ==============
 
