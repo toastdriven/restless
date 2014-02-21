@@ -1,0 +1,23 @@
+restless v1.4.0
+===============
+
+:date: 2014-02-20
+
+This release improves the way errors are handled (serialized tracebacks in
+debug), making them more consistent. It also improves Django's support for
+``ObjectDoesNotExist/Http404`` & switched to using ``py.test`` for testing.
+
+
+Features
+--------
+
+* Better not-found behavior in Django. (SHA: 7cd2cfc)
+* Improved ``Http404`` behavior in Django. (SHA: 44b2e5f)
+* Switched to ``py.test``. (SHA: 30534a7)
+* Better error handling support. (SHA: ae5a9cb)
+
+
+Bugfixes
+--------
+
+* Skips Itty's tests if it is not available. (SHA: b4e859b)
