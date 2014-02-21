@@ -1,6 +1,7 @@
+import sys
 import unittest
 
-from restless.utils import lookup_data
+from restless.utils import lookup_data, format_traceback
 
 
 class InstaObj(object):
@@ -65,3 +66,17 @@ class LookupDataTestCase(unittest.TestCase):
     def test_complex_miss(self):
         with self.assertRaises(AttributeError):
             lookup_data('more.nested.nope', self.dict_data)
+
+
+class FormatTracebackTestCase(unittest.TestCase):
+    def test_format_traceback(self):
+        try:
+            raise ValueError("Because we need an exception.")
+        except:
+            exc_info = sys.exc_info()
+            result = format_traceback(exc_info)
+            self.assertTrue(result.startswith('Traceback (most recent call last):\n'))
+            self.assertFalse(result.endswith('\n'))
+            lines = result.split('\n')
+            self.assertTrue(len(lines) > 3)
+            self.assertEqual(lines[-1], 'ValueError: Because we need an exception.')
