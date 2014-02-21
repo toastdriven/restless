@@ -71,7 +71,7 @@ class LookupDataTestCase(unittest.TestCase):
 class FormatTracebackTestCase(unittest.TestCase):
     def test_format_traceback(self):
         try:
-            raise IOError("Because we need an exception.")
+            raise ValueError("Because we need an exception.")
         except:
             exc_info = sys.exc_info()
             result = format_traceback(exc_info)
@@ -79,4 +79,4 @@ class FormatTracebackTestCase(unittest.TestCase):
             self.assertFalse(result.endswith('\n'))
             lines = result.split('\n')
             self.assertTrue(len(lines) > 3)
-            self.assertEqual(lines[-1], 'OSError: Because we need an exception.')
+            self.assertEqual(lines[-1], 'ValueError: Because we need an exception.')
