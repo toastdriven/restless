@@ -66,7 +66,9 @@ Rather than try to build something that automatically does the typically
 correct thing within each of the views, it's up to you to implement the bodies
 of various HTTP methods.
 
-Example code::
+Example code:
+
+.. code:: python
 
     # posts/api.py
     from django.contrib.auth.models import User
@@ -119,7 +121,9 @@ Example code::
         def delete(self, pk):
             Post.objects.get(id=pk).delete()
 
-Hooking it up::
+Hooking it up:
+
+.. code:: python
 
     # api/urls.py
     from django.conf.urls.default import url, patterns, include
@@ -142,7 +146,9 @@ BSD
 Running the Tests
 =================
 
-Getting the tests running looks like::
+Getting the tests running looks like:
+
+.. code:: sh
 
     $ virtualenv -p python3 env3
     $ . env3/bin/activate
@@ -150,7 +156,9 @@ Getting the tests running looks like::
     $ export PYTHONPATH=`pwd`
     $ py.test -s -v --cov=restless --cov-report=html tests
 
-For Python 2::
+For Python 2:
+
+.. code:: sh
 
     $ virtualenv env2
     $ . env2/bin/activate
