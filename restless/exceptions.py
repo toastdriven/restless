@@ -1,4 +1,4 @@
-from .constants import APPLICATION_ERROR, UNAUTHORIZED, NOT_FOUND
+from .constants import APPLICATION_ERROR, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST
 from .constants import METHOD_NOT_ALLOWED, METHOD_NOT_IMPLEMENTED
 
 
@@ -32,6 +32,11 @@ class HttpError(RestlessError):
             msg = self.__class__.msg
 
         super(HttpError, self).__init__(msg)
+
+
+class BadRequest(HttpError):
+    status = BAD_REQUEST
+    msg = "Bad request."
 
 
 class Unauthorized(HttpError):
