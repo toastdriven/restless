@@ -295,7 +295,7 @@ construction easier. For example::
                 'title': post.title,
                 # We leverage the ``prepare`` method from above to build the
                 # nested data we want.
-                'author': ur.prepare(post.user.id),
+                'author': ur.prepare(post.user),
                 'body': post.content,
                 # ...
             }
@@ -323,7 +323,7 @@ framework, we'll use those as an example...::
     from django.forms import ModelForm
 
     from restless.dj import DjangoResource
-    from restless.exceptions import HttpError
+    from restless.exceptions import BadRequest
 
 
     class UserForm(ModelForm):
@@ -338,7 +338,7 @@ framework, we'll use those as an example...::
             form = UserForm(self.data)
 
             if not form.is_valid():
-                raise HttpError("You're a bad person & you should feel bad.")
+                raise BadRequest('Something is wrong.')
 
             # Continue as normal, using the form data instead.
             user = User.objects.create(
@@ -369,7 +369,7 @@ up your code into a validation method. An example of this might look like...::
             form = UserForm(self.data)
 
             if not form.is_valid():
-                raise HttpError("You're a bad person & you should feel bad.")
+                raise BadRequest('Something is wrong.')
 
             return form.cleaned_data
 
