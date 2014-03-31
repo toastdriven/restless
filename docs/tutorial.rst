@@ -166,18 +166,19 @@ We'll start with the most basic functional example.::
 
     # posts/api.py
     from restless.dj import DjangoResource
+    from restless.prepare import FieldsPreparer
 
     from posts.models import Post
 
 
     class PostResource(DjangoResource):
-        fields = {
+        preparer = FieldsPreparer(fields={
             'id': 'id',
             'title': 'title',
             'author': 'user.username',
             'body': 'content',
             'posted_on': 'posted_on',
-        }
+        })
 
         # GET /api/posts/ (but not hooked up yet)
         def list(self):
@@ -202,9 +203,9 @@ mapping between what the API will return & where the data is. This allows you
 to mask/rename fields, prevent some fields from being exposed or lookup
 information buried deep in the data model. The mapping is defined like...::
 
-    fields = {
+    FieldsPreparer(fields={
         'the_fieldname_exposed_to_the_user': 'a_dotted_path_to_the_data',
-    }
+    })
 
 This dotted path is what allows use to drill in. For instance, the ``author``
 field above has a path of ``user.username``. When serializing, this will cause
@@ -348,18 +349,19 @@ as well. So we'll implement some more methods.::
 
     # posts/api.py
     from restless.dj import DjangoResource
+    from restless.prepare import FieldsPreparer
 
     from posts.models import Post
 
 
     class PostResource(DjangoResource):
-        fields = {
+        preparer = FieldsPreparer(fields={
             'id': 'id',
             'title': 'title',
             'author': 'user.username',
             'body': 'content',
             'posted_on': 'posted_on',
-        }
+        })
 
         # GET /api/posts/
         def list(self):
@@ -509,12 +511,13 @@ adding the ``is_authenticated`` method.::
 
     # posts/api.py
     from restless.dj import DjangoResource
+    from restless.prepare import FieldsPreparer
 
     from posts.models import Post
 
 
     class PostResource(DjangoResource):
-        fields = {
+        preparer = FieldsPreparer(fields={
             'id': 'id',
             'title': 'title',
             'author': 'user.username',

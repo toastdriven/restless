@@ -1,18 +1,19 @@
 from django.contrib.auth.models import User
 
 from restless.dj import DjangoResource
+from restless.prepare import FieldsPreparer
 
 from posts.models import Post
 
 
 class PostResource(DjangoResource):
-    fields = {
+    preparer = FieldsPreparer(fields={
         'id': 'id',
         'title': 'title',
         'author': 'user.username',
         'body': 'content',
         'posted_on': 'posted_on',
-    }
+    })
 
     def list(self):
         return Post.objects.all()
