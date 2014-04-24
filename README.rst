@@ -4,6 +4,8 @@ restless
 
 .. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
         :target: https://travis-ci.org/toastdriven/restless
+.. image:: https://coveralls.io/repos/toastdriven/restless/badge.png
+        :target: https://coveralls.io/r/toastdriven/restless
 
 A lightweight REST miniframework for Python.
 
