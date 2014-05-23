@@ -1,6 +1,6 @@
 import unittest
 
-from restless.prepare import Preparer, FieldsPreparer
+from restless.preparers import Preparer, FieldsPreparer
 
 
 class InstaObj(object):

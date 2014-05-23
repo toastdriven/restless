@@ -9,7 +9,7 @@ settings.configure(DEBUG=True)
 
 from restless.dj import DjangoResource
 from restless.exceptions import Unauthorized
-from restless.prepare import FieldsPreparer
+from restless.preparers import FieldsPreparer
 from restless.resources import skip_prepare
 from restless.utils import json
 

@@ -9,6 +9,11 @@ class Preparer(object):
         super(Preparer, self).__init__()
 
     def prepare(self, data):
+        """
+        Handles actually transforming the data.
+
+        By default, this does nothing & simply returns the data passed to it.
+        """
         return data
 
 
@@ -19,12 +24,30 @@ class FieldsPreparer(Preparer):
     This takes a ``fields`` parameter, which should be a dictionary of
     keys (fieldnames to expose to the user) & values (a dotted lookup path to
     the desired attribute/key on the object).
+
+    Example::
+
+        preparer = FieldsPreparer(fields={
+            # ``user`` is the key the client will see.
+            # ``author.pk`` is the dotted path lookup ``FieldsPreparer``
+            # will traverse on the data to return a value.
+            'user': 'author.pk',
+        })
+
     """
     def __init__(self, fields):
         super(FieldsPreparer, self).__init__()
         self.fields = fields
 
     def prepare(self, data):
+        """
+        Handles transforming the provided data into the fielded data that should
+        be exposed to the end user.
+
+        Uses the ``lookup_data`` method to traverse dotted paths.
+
+        Returns a dictionary of data as the response.
+        """
         result = {}
 
         if not self.fields:

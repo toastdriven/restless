@@ -3,7 +3,7 @@ import decimal
 import unittest
 
 from restless.exceptions import HttpError, NotFound, MethodNotImplemented
-from restless.prepare import Preparer, FieldsPreparer
+from restless.preparers import Preparer, FieldsPreparer
 from restless.resources import Resource
 from restless.utils import json
 

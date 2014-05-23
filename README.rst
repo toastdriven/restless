@@ -78,7 +78,7 @@ Example code::
 
     class PostResource(DjangoResource):
         # Controls what data is included in the serialized output.
-        prepare_with = Preparer(fields={
+        preparer = Preparer(fields={
             'id': 'id',
             'title': 'title',
             'author': 'user.username',

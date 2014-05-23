@@ -1,6 +1,6 @@
 __author__ = 'Daniel Lindsley'
 __license__ = 'BSD'
-__version__ = (1, 4, 1, 'dev')
+__version__ = (2, 0, 0, 'dev')
 
 
 from .resources import Resource

@@ -4,7 +4,7 @@ import sys
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .data import Data
 from .exceptions import MethodNotImplemented, Unauthorized
-from .prepare import Preparer, FieldsPreparer
+from .preparers import Preparer, FieldsPreparer
 from .serializers import JSONSerializer
 from .utils import format_traceback
 

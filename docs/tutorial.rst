@@ -166,7 +166,7 @@ We'll start with the most basic functional example.::
 
     # posts/api.py
     from restless.dj import DjangoResource
-    from restless.prepare import FieldsPreparer
+    from restless.preparers import FieldsPreparer
 
     from posts.models import Post
 
@@ -349,7 +349,7 @@ as well. So we'll implement some more methods.::
 
     # posts/api.py
     from restless.dj import DjangoResource
-    from restless.prepare import FieldsPreparer
+    from restless.preparers import FieldsPreparer
 
     from posts.models import Post
 
@@ -511,7 +511,7 @@ adding the ``is_authenticated`` method.::
 
     # posts/api.py
     from restless.dj import DjangoResource
-    from restless.prepare import FieldsPreparer
+    from restless.preparers import FieldsPreparer
 
     from posts.models import Post
 

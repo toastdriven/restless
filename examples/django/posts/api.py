@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
 from restless.dj import DjangoResource
-from restless.prepare import FieldsPreparer
+from restless.preparers import FieldsPreparer
 
 from posts.models import Post
 
