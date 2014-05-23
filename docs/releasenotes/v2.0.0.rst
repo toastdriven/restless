@@ -1,0 +1,109 @@
+restless v2.0.0
+===============
+
+:date: 2014-05-23
+
+This release improves the way data preparation & serialization are handled.
+It introduces these as separate, composable objects (``Preparer`` &
+``Serializer``) that are assigned onto a ``Resource``.
+
+
+Porting from 1.X.X to 2.0.0
+---------------------------
+
+Porting is relatively straightforward in both the preparation & serialization
+cases.
+
+Preparation
+~~~~~~~~~~~
+
+If you were supplying ``fields`` on your ``Resource``, such as::
+
+    # posts/api.py
+    from restless.dj import DjangoResource
+
+    from posts.models import Post
+
+
+    class PostResource(DjangoResource):
+        fields = {
+            'id': 'id',
+            'title': 'title',
+            'author': 'user.username',
+            'body': 'content',
+            'posted_on': 'posted_on',
+        }
+
+Porting is simply 1.adding an import & 2. changing the assignment.::
+
+    # posts/api.py
+    from restless.dj import DjangoResource
+    # 1. ADDED IMPORT
+    from restless.preparers import FieldsPreparer
+
+    from posts.models import Post
+
+
+    class PostResource(DjangoResource):
+        # 2. CHANGED ASSIGNMENT
+        preparer = FieldsPreparer{
+            'id': 'id',
+            'title': 'title',
+            'author': 'user.username',
+            'body': 'content',
+            'posted_on': 'posted_on',
+        }
+
+
+Serialization
+~~~~~~~~~~~~~
+
+Serialization is even easier. If you performed no overridding, there's nothing
+to update. You simply get the new ``JSONSerializer`` object automatically.
+
+If you were overriding either ``raw_deserialize`` or ``raw_serialize``, you
+should create a new ``Serializer`` subclass & move the methods over to it,
+changing their signatures as you go. Then assign an instance of your new
+``Serializer`` subclass onto your ``Resource``(s).
+
+Unported YAML serialization::
+
+    import yaml
+
+    from restless import Resource
+
+
+    class MyResource(Resource):
+        def raw_deserialize(self, body):
+            return yaml.safe_load(body)
+
+        def raw_serialize(self, data):
+            return yaml.dump(data)
+
+Ported serialization::
+
+    import yaml
+
+    from restless import Resource
+    from restless.serializers import Serializer
+
+
+    class YAMLSerializer(Serializer):
+        def deserialize(self, body):
+            return yaml.safe_load(body)
+
+        def serialize(self, data):
+            return yaml.dump(data)
+
+
+    class MyResource(Resource):
+        serializer = YAMLSerializer()
+
+
+Features
+--------
+
+* Added syntax highlighting to docs. (SHA: d398fdb)
+* Added a ``BAD_REQUEST`` constant & associated ``BadRequest`` error.
+  (SHA: 93d73d6, SHA: 8d49b51 & SHA: a719c88)
+* Moved to composition for data preparation & serialization. (SHA: 38aabb9)
