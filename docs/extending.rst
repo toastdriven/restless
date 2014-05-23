@@ -148,7 +148,7 @@ Customizing Data Output
 
 There are three approaches to customizing your data ouput.
 
-#. The built-in ``FieldsPreparer`` (simple)
+#. The built-in ``Preparer/FieldsPreparer`` (simple)
 #. Overriding :py:meth:`restless.resources.Resource.prepare` (happy medium)
 #. Per-method data (flexible but most work)
 
@@ -415,45 +415,47 @@ For the purposes of demonstration, we'll implement YAML in place of JSON.
 The process would be similar (but much more verbose) for XML (& brings
 `a host of problems`_ as well).
 
-Start by creating a subclass specifically for serialization. We'll override
-a couple methods there, then all your actual API classes can inherit from it.::
+Start by creating a ``Serializer`` subclass for the YAML. We'll override
+a couple methods there. This code can live anywhere, as long as it is
+importable for your ``Resource``.::
 
     import yaml
 
-    from restless import Resource
+    from restless.serializers import Serializer
 
 
-    class YAMLResource(Resource):
-        def raw_deserialize(self, body):
+    class YAMLSerializer(Serializer):
+        def deserialize(self, body):
             # Do **NOT** use ``yaml.load`` here, as it can contain things like
             # *functions* & other dangers!
             return yaml.safe_load(body)
 
-        def raw_serialize(self, data):
+        def serialize(self, data):
             return yaml.dump(data)
 
-Once those methods are implemented, it's just a matter of changing the
-inheritance on your classes.::
+Once that class has been created, it's just a matter of assigning an instance
+onto your ``Resource``.::
 
     # Old.
     class MyResource(Resource):
-        # ...
+        # This was present by default.
+        serializer = JSONSerializer()
 
     # New.
-    class MyResource(YAMLResource):
-        # ...
+    class MyResource(Resource):
+        serializer = YAMLSerializer()
 
 You can even do things like handle multiple serialization formats, say if the
 user provides a ``?format=yaml`` GET param...::
 
-    from restless import Resource
+    from restless.serializers import Serializer
     from restless.utils import json, MoreTypesJSONEncoder
 
     from django.template import Context, Template
 
 
-    class MultiSerializeResource(Resource):
-        def raw_deserialize(self, body):
+    class MultiSerializer(Serializer):
+        def deserialize(self, body):
             # This is Django-specific, but all frameworks can handle GET
             # parameters...
             ct = request.GET.get('format', 'json')
@@ -463,7 +465,7 @@ user provides a ``?format=yaml`` GET param...::
             else:
                 return json.load(body)
 
-        def raw_serialize(self, data):
+        def serialize(self, data):
             # Again, Django-specific.
             ct = request.GET.get('format', 'json')
 
