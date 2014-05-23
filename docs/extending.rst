@@ -35,11 +35,13 @@ For instance, if you wanted to added a schema view (``/api/posts/schema/``)
 that responded to ``GET`` requests, you'd first write the method::
 
     from restless.dj import DjangoResource
+    from restless.resources import skip_prepare
 
 
     class PostResource(DjangoResource):
         # The usual methods, then...
 
+        @skip_prepare
         def schema(self):
             # Return your schema information.
             # We're keeping it simple (basic field names & data types).
@@ -57,6 +59,7 @@ either be fully written out in your class or (as I prefer) a small extension
 to your ``__init__``...::
 
     from restless.dj import DjangoResource
+    from restless.resources import skip_prepare
 
 
     class PostResource(DjangoResource):
@@ -74,6 +77,7 @@ to your ``__init__``...::
 
         # The usual methods, then...
 
+        @skip_prepare
         def schema(self):
             return {
                 'fields': {
@@ -91,6 +95,7 @@ manually or (once again) by extending a built-in method.::
     from django.conf.urls import patterns, url
 
     from restless.dj import DjangoResource
+    from restless.resources import skip_prepare
 
 
     class PostResource(DjangoResource):
@@ -104,6 +109,11 @@ manually or (once again) by extending a built-in method.::
 
         # The usual methods, then...
 
+        # Note: We're using the ``skip_prepare`` decorator here so that Restless
+        # doesn't run ``prepare`` on the schema data.
+        # If your custom view returns a typical ``object/dict`` (like the
+        # ``detail`` method), you can omit this.
+        @skip_prepare
         def schema(self):
             return {
                 'fields': {
@@ -119,16 +129,13 @@ manually or (once again) by extending a built-in method.::
         def urls(cls, name_prefix=None):
             urlpatterns = super(PostResource, cls).urls(cls, name_prefix=name_prefix)
             return urlpatterns + patterns('',
-                # Note: We pass ``prepare_data=False`` here so that Restless
-                # doesn't run ``prepare`` on the schema data.
-                # If your custom view returns a typical ``object/dict`` (like
-                # the ``detail`` method), you can omit this.
-                url(r'^schema/$', cls.as_view('schema', prepare_data=False), name=cls.build_url_name('schema', name_prefix)),
+                url(r'^schema/$', cls.as_view('schema'), name=cls.build_url_name('schema', name_prefix)),
             )
 
 .. note::
 
-    This step varies from framework to framework. The code is specific to the
+    This step varies from framework to framework around hooking up the
+    URLs/routes. The code is specific to the
     :py:class:`restless.dj.DjangoResource`, but the approach is the same
     regardless.
 
@@ -141,25 +148,27 @@ Customizing Data Output
 
 There are three approaches to customizing your data ouput.
 
-#. The built-in ``fields`` (simple)
+#. The built-in ``FieldsPreparer`` (simple)
 #. Overriding :py:meth:`restless.resources.Resource.prepare` (happy medium)
 #. Per-method data (flexible but most work)
 
 Fields
 ------
 
-Using ``fields`` is documented elsewhere (see the :ref:`tutorial`), but the
-basic gist is that you define a dictionary on the **class**. Example::
+Using ``FieldsPreparer`` is documented elsewhere (see the :ref:`tutorial`), but
+the basic gist is that you create a ``FieldsPreparer`` instance & assign it
+on your resource class. It takes a ``fields`` parameter, which should be a
+dictionary of fields to expose. Example::
 
     class MyResource(Resource):
-        fields = {
+        preparer = FieldsPreparer(fields={
             # Expose the same name.
             "id": "id",
             # Rename a field.
             "author": "username",
             # Access deeper data.
             "type_id": "metadata.type.pk",
-        }
+        })
 
 This dictionary is a mapping, with keys representing the final name & the
 values acting as a lookup path.
@@ -191,16 +200,17 @@ could do something like::
     from django.contrib.auth.models import User
 
     from restless.dj import DjangoResource
+    from restless.preparers import FieldsPreparer
 
 
     class UserResource(DjangoResource):
-        fields = {
+        preparer = FieldsPreparer(fields={
             'id': 'id',
             'username': 'username',
             # We're including email here, but we'll sanitize it later.
             'email': 'email',
             'date_joined': 'date_joined',
-        }
+        })
 
         def list(self):
             return User.objects.all()
@@ -267,16 +277,17 @@ construction easier. For example::
     from django.contrib.auth.models import User
 
     from restless.dj import DjangoResource
+    from restless.preparers import FieldsPreparer
 
     from posts.models import Post
 
 
     class UserResource(DjangoResource):
-        fields = {
+        preparer = FieldsPreparer(fields={
             'id': 'id',
             'username': 'username',
             'date_joined': 'date_joined',
-        }
+        })
 
         def detail(self, pk):
             return User.objects.get(pk=pk)

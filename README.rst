@@ -80,13 +80,13 @@ Example code:
 
     class PostResource(DjangoResource):
         # Controls what data is included in the serialized output.
-        fields = {
+        preparer = Preparer(fields={
             'id': 'id',
             'title': 'title',
             'author': 'user.username',
             'body': 'content',
             'posted_on': 'posted_on',
-        }
+        })
 
         # GET /
         def list(self):

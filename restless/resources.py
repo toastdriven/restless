@@ -2,8 +2,21 @@ import six
 import sys
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
+from .data import Data
 from .exceptions import MethodNotImplemented, Unauthorized
-from .utils import json, lookup_data, MoreTypesJSONEncoder, format_traceback
+from .preparers import Preparer, FieldsPreparer
+from .serializers import JSONSerializer
+from .utils import format_traceback
+
+
+def skip_prepare(func):
+    """
+    A convenience decorator for indicating the raw data should not be prepared.
+    """
+    def _wrapper(self, *args, **kwargs):
+        value = func(self, *args, **kwargs)
+        return Data(value, should_prepare=False)
+    return _wrapper
 
 
 class Resource(object):
@@ -32,7 +45,6 @@ class Resource(object):
     on the class. These respectively control the HTTP status codes returned by
     the views and the way views are looked up (based on HTTP method & endpoint).
     """
-    fields = None
     status_map = {
         'list': OK,
         'detail': OK,
@@ -57,6 +69,8 @@ class Resource(object):
             'DELETE': 'delete',
         }
     }
+    preparer = Preparer()
+    serializer = JSONSerializer()
 
     def __init__(self, *args, **kwargs):
         self.init_args = args
@@ -64,7 +78,6 @@ class Resource(object):
         self.request = None
         self.data = None
         self.status = 200
-        self.prepare_data = self.init_kwargs.pop('prepare_data', True)
 
     @classmethod
     def as_list(cls, *init_args, **init_kwargs):
@@ -201,7 +214,7 @@ class Resource(object):
             # Add the traceback.
             data['traceback'] = format_traceback(sys.exc_info())
 
-        body = self.raw_serialize(data)
+        body = self.serializer.serialize(data)
         status = getattr(err, 'status', 500)
         return self.build_response(body, status=status)
 
@@ -299,40 +312,6 @@ class Resource(object):
 
         return self.build_error(err)
 
-    def raw_deserialize(self, body):
-        """
-        The low-level deserialization.
-
-        Underpins ``deserialize``, ``deserialize_list`` &
-        ``deserialize_detail``.
-
-        Has no built-in smarts, simply loads the JSON.
-
-        :param body: The body of the current request
-        :type body: string
-
-        :returns: The deserialized data
-        :rtype: ``list`` or ``dict``
-        """
-        return json.loads(body)
-
-    def raw_serialize(self, data):
-        """
-        The low-level serialization.
-
-        Underpins ``serialize``, ``serialize_list`` &
-        ``serialize_detail``.
-
-        Has no built-in smarts, simply dumps the JSON.
-
-        :param data: The body for the response
-        :type data: string
-
-        :returns: A serialized version of the data
-        :rtype: string
-        """
-        return json.dumps(data, cls=MoreTypesJSONEncoder)
-
     def deserialize(self, method, endpoint, body):
         """
         A convenience method for deserializing the body of a request.
@@ -367,7 +346,7 @@ class Resource(object):
         :returns: The deserialized body or an empty ``list``
         """
         if body:
-            return self.raw_deserialize(body)
+            return self.serializer.deserialize(body)
 
         return []
 
@@ -381,7 +360,7 @@ class Resource(object):
         :returns: The deserialized body or an empty ``dict``
         """
         if body:
-            return self.raw_deserialize(body)
+            return self.serializer.deserialize(body)
 
         return {}
 
@@ -417,9 +396,6 @@ class Resource(object):
         """
         Given a collection of data (``objects`` or ``dicts``), serializes them.
 
-        If ``self.prepare_data`` is ``True`` (the default), this will call
-        ``prepare`` for each item, to optionally reshape the output.
-
         :param data: The collection of items to serialize
         :type data: list or iterable
 
@@ -429,20 +405,19 @@ class Resource(object):
         if data is None:
             return ''
 
-        if self.prepare_data:
-            prepped_data = [self.prepare(item) for item in data]
+        # Check for a ``Data``-like object. We should assume ``True`` (all
+        # data gets prepared) unless it's explicitly marked as not.
+        if not getattr(data, 'should_prepare', True):
+            prepped_data = data.value
         else:
-            prepped_data = data
+            prepped_data = [self.prepare(item) for item in data]
 
         final_data = self.wrap_list_response(prepped_data)
-        return self.raw_serialize(final_data)
+        return self.serializer.serialize(final_data)
 
     def serialize_detail(self, data):
         """
         Given a single item (``object`` or ``dict``), serializes it.
-
-        If ``self.prepare_data`` is ``True`` (the default), this will call
-        ``prepare`` on the item, to optionally reshape the output.
 
         :param data: The item to serialize
         :type data: object or dict
@@ -453,24 +428,19 @@ class Resource(object):
         if data is None:
             return ''
 
-        if self.prepare_data:
-            final_data = self.prepare(data)
+        # Check for a ``Data``-like object. We should assume ``True`` (all
+        # data gets prepared) unless it's explicitly marked as not.
+        if not getattr(data, 'should_prepare', True):
+            prepped_data = data.value
         else:
-            final_data = data
+            prepped_data = self.prepare(data)
 
-        return self.raw_serialize(final_data)
+        return self.serializer.serialize(prepped_data)
 
     def prepare(self, data):
         """
         Given an item (``object`` or ``dict``), this will potentially go through
-        & reshape the output based on ``self.fields``.
-
-        If ``self.fields`` is empty or ``None``, the entire thing will be
-        returned.
-
-        If ``self.fields`` is present/populated, this will use the lookup to
-        extract data & shape the resulting output match the keys of
-        ``self.fields``.
+        & reshape the output based on ``self.prepare_with`` object.
 
         :param data: An item to prepare for serialization
         :type data: object or dict
@@ -478,16 +448,7 @@ class Resource(object):
         :returns: A potentially reshaped dict
         :rtype: dict
         """
-        result = {}
-
-        if not self.fields:
-            # No fields specified. Serialize everything.
-            return data
-
-        for fieldname, lookup in self.fields.items():
-            result[fieldname] = lookup_data(lookup, data)
-
-        return result
+        return self.preparer.prepare(data)
 
     def wrap_list_response(self, data):
         """

@@ -8,19 +8,21 @@ from django.conf import settings
 settings.configure(DEBUG=True)
 
 from restless.dj import DjangoResource
-from restless.exceptions import MethodNotImplemented, Unauthorized
+from restless.exceptions import Unauthorized
+from restless.preparers import FieldsPreparer
+from restless.resources import skip_prepare
 from restless.utils import json
 
 from .fakes import FakeHttpRequest, FakeModel
 
 
 class DjTestResource(DjangoResource):
-    fields = {
+    preparer = FieldsPreparer(fields={
         'id': 'id',
         'title': 'title',
         'author': 'username',
         'body': 'content'
-    }
+    })
     fake_db = []
 
     def __init__(self, *args, **kwargs):
@@ -72,6 +74,7 @@ class DjTestResource(DjangoResource):
     def create_detail(self):
         raise ValueError("This is a random & crazy exception.")
 
+    @skip_prepare
     def schema(self):
         # A WILD SCHEMA VIEW APPEARS!
         return {
@@ -167,7 +170,7 @@ class DjangoResourceTestCase(unittest.TestCase):
 
     def test_as_view(self):
         # This would be hooked up via the URLconf...
-        schema_endpoint = DjTestResource.as_view('schema', prepare_data=False)
+        schema_endpoint = DjTestResource.as_view('schema')
         req = FakeHttpRequest('GET')
 
         resp = schema_endpoint(req)
