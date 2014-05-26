@@ -74,6 +74,7 @@ Example code:
     from django.contrib.auth.models import User
 
     from restless.dj import DjangoResource
+    from restless.preparers import Preparer
 
     from posts.models import Post
 
