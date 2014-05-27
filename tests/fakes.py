@@ -1,7 +1,12 @@
+import six
+
+
 class FakeHttpRequest(object):
     def __init__(self, method='GET', body=''):
         self.method = method.upper()
         self.body = body
+        if six.PY3:
+            self.body = body.encode('utf-8')
 
 
 class FakeHttpResponse(object):
