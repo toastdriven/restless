@@ -37,8 +37,16 @@ class DjTestResource(DjangoResource):
     def fake_init(self):
         # Just for testing.
         self.__class__.fake_db = [
-            FakeModel(id=2, title='First post', username='daniel', content='Hello world!'),
-            FakeModel(id=4, title='Another', username='daniel', content='Stuff here.'),
+            FakeModel(
+                id=2,
+                title='First post',
+                username='daniel',
+                content='Hello world!'),
+            FakeModel(
+                id=4,
+                title='Another',
+                username='daniel',
+                content='Stuff here.'),
             FakeModel(id=5, title='Last', username='daniel', content="G'bye!"),
         ]
 
@@ -196,7 +204,8 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 501)
         resp_json = json.loads(resp.content.decode('utf-8'))
-        self.assertEqual(resp_json['error'], "Unsupported method 'TRACE' for list endpoint.")
+        self.assertEqual(
+            resp_json['error'], "Unsupported method 'TRACE' for list endpoint.")
         self.assertTrue('traceback' in resp_json)
 
     def test_handle_not_authenticated(self):
@@ -314,7 +323,9 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.assertEqual(patterns[1].name, 'v2_tests_detail')
 
     def test_create(self):
-        self.res.request = FakeHttpRequest('POST', body='{"id": 6, "title": "Moved hosts", "author": "daniel"}')
+        self.res.request = FakeHttpRequest(
+            'POST',
+            body='{"id": 6, "title": "Moved hosts", "author": "daniel"}')
         self.assertEqual(len(self.res.fake_db), 3)
 
         resp = self.res.handle('list')
