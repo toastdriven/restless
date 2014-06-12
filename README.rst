@@ -74,13 +74,14 @@ Example code:
     from django.contrib.auth.models import User
 
     from restless.dj import DjangoResource
+    from restless.preparers import FieldsPreparer
 
     from posts.models import Post
 
 
     class PostResource(DjangoResource):
         # Controls what data is included in the serialized output.
-        preparer = Preparer(fields={
+        preparer = FieldsPreparer(fields={
             'id': 'id',
             'title': 'title',
             'author': 'user.username',
