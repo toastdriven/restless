@@ -26,6 +26,10 @@ class DjangoResource(Resource):
     def as_detail(self, *args, **kwargs):
         return csrf_exempt(super(DjangoResource, self).as_detail(*args, **kwargs))
 
+    @classmethod
+    def as_view(cls, view_type, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_view(view_type, *args, **kwargs))
+
     def is_debug(self):
         # By default, Django-esque.
         return settings.DEBUG
