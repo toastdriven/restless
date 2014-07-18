@@ -82,6 +82,15 @@ class TornadoResource(Resource):
         a reference to ``tornado.web.Application``
         """
 
+        self.ref_rh = None
+
+    @property
+    def r_handler(self):
+        """
+        access to ``tornado.web.RequestHandler``
+        """
+        return self.ref_rh
+
     @classmethod
     def as_view(cls, view_type, *init_args, **init_kwargs):
         """
