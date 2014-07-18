@@ -1,6 +1,6 @@
 import unittest
 
-from restless.tnd import TornadoResource
+from restless.tnd import TornadoResource, _BridgeMixin
 from restless.utils import json
 from tornado import testing, web, httpserver, gen
 from restless.constants import UNAUTHORIZED
@@ -165,6 +165,17 @@ class InternalTestCase(BaseTestCase):
     def test_method(self):
         self.assertEqual(self.new_handler.resource_handler.request_method(), 'GET')
 
+    def test_class(self):
+        """ test the generated tornado.web.RequestHandler """
+        self.assertEqual(self.new_handler.__class__.__name__, 'TndBasicTestResource__BridgeMixin_restless')
+        self.assertTrue(_BridgeMixin in self.new_handler.__class__.__mro__)
+        self.assertTrue(web.RequestHandler in self.new_handler.__class__.__mro__)
+
+    def test_var(self):
+        """ make sure variable from tornado is correctly passed. """
+        self.assertTrue(hasattr(self.new_handler.resource_handler, 'request'))
+        self.assertTrue(hasattr(self.new_handler.resource_handler, 'application'))
+
 
 class TndDeleteTestResource(TndBasicTestResource):
     """
@@ -209,7 +220,6 @@ class FuncTrimTestCase(BaseTestCase):
         self.assertIn('get', self.new_handler.__class__.__dict__)
         self.assertIn('delete', self.new_handler.__class__.__dict__)
         self.assertNotIn('put', self.new_handler.__class__.__dict__)
-
 
 
 class TndAsyncResourceTestCase(BaseHTTPTestCase):

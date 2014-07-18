@@ -40,14 +40,13 @@ def _method(self, *args, **kwargs):
     yield self.resource_handler.handle(self.__resource_view_type__, *args, **kwargs)
 
 
-class _WrappedRequestHandler(web.RequestHandler):
+class _BridgeMixin(object):
     """
-    A wrapper class based on tornado.web.RequestHandler
-    to bridge restless and tornado
+    This mixin would pass tornado parameters to restless,
+    and helps to init a resource instance
     """
     def __init__(self, *args, **kwargs):
-        super(_WrappedRequestHandler, self).__init__(*args, **kwargs)
-
+        super(_BridgeMixin, self).__init__(*args, **kwargs)
         # create a resource instance based on the registered class
         # and init-parameters
         self.resource_handler = self.__class__.__resource_cls__(
@@ -62,13 +61,27 @@ class _WrappedRequestHandler(web.RequestHandler):
 class TornadoResource(Resource):
     """
     A Tornado-specific ``Resource`` subclass.
-
-    Doesn't require any special configuration, but helps when working in a
-    Tornado environment.
-
-    But don't return future from those methods, the Preparer in restless
-    are not aware of futre.
     """
+
+    _request_handler_base_ = web.RequestHandler
+    """
+    To override ``tornado.web.RequestHandler`` we used,
+    please assign your RequestHandler via this attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(TornadoResource, self).__init__(*args, **kwargs)
+
+        self.request = None
+        """
+        a reference to ``tornado.httpclient.HTTPRequest``
+        """
+
+        self.application = None
+        """
+        a reference to ``tornado.web.Application``
+        """
+
     @classmethod
     def as_view(cls, view_type, *init_args, **init_kwargs):
         """
@@ -78,8 +91,8 @@ class TornadoResource(Resource):
         global _method
 
         new_cls = type(
-            cls.__name__ + '_' +  _WrappedRequestHandler.__name__,
-            (_WrappedRequestHandler,),
+            cls.__name__ + '_' + _BridgeMixin.__name__ + '_restless',
+            (_BridgeMixin, cls._request_handler_base_,),
             dict(
                 __resource_cls__=cls,
                 __resource_args__=init_args,
