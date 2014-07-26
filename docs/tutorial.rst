@@ -373,7 +373,7 @@ as well. So we'll implement some more methods.::
 
         # Add this!
         # POST /api/posts/
-        def create(self, data):
+        def create(self):
             return Post.objects.create(
                 title=self.data['title'],
                 user=User.objects.get(username=self.data['author']),
