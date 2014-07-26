@@ -61,7 +61,7 @@ class FlaskResource(Resource):
         :param endpoint_prefix: (Optional) A prefix for the URL's name (for
             resolving). The default is ``None``, which will autocreate a prefix
             based on the class name. Ex: ``BlogPostResource`` ->
-            ``api_blog_post_list``
+            ``api_blogpost_list``
         :type endpoint_prefix: string
 
         :returns: The final name
