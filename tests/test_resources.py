@@ -18,6 +18,12 @@ class NonDjangoResource(Resource):
         resp.status_code = status
         return resp
 
+    # This should Fake some endpoint Authentication
+    def is_authenticated(self):
+        if self.endpoint == 'list':
+            return False
+        return super(NonDjangoResource, self).is_authenticated()
+
 
 class ResourceTestCase(unittest.TestCase):
     resource_class = NonDjangoResource
@@ -35,6 +41,7 @@ class ResourceTestCase(unittest.TestCase):
         self.assertEqual(res.init_kwargs, {'test': True})
         self.assertEqual(res.request, None)
         self.assertEqual(res.data, None)
+        self.assertEqual(res.endpoint, None)
         self.assertEqual(res.status, 200)
 
     def test_request_method(self):
@@ -259,6 +266,9 @@ class ResourceTestCase(unittest.TestCase):
         self.res.request = FakeHttpRequest('DELETE')
         self.assertFalse(self.res.is_authenticated())
 
+        self.res.handle('list')
+        self.assertFalse(self.res.is_authenticated())
+
     def test_list(self):
         with self.assertRaises(MethodNotImplemented):
             self.res.list()
@@ -290,3 +300,35 @@ class ResourceTestCase(unittest.TestCase):
     def test_delete_list(self):
         with self.assertRaises(MethodNotImplemented):
             self.res.delete_list()
+
+    def test_endpoint_list(self):
+        self.res.handle('list')
+        self.assertEqual(self.res.endpoint, 'list')
+
+    def test_endpoint_detail(self):
+        self.res.handle('detail')
+        self.assertEqual(self.res.endpoint, 'detail')
+
+    def test_endpoint_create(self):
+        self.res.handle('create')
+        self.assertEqual(self.res.endpoint, 'create')
+
+    def test_endpoint_update(self):
+        self.res.handle('update')
+        self.assertEqual(self.res.endpoint, 'update')
+
+    def test_endpoint_delete(self):
+        self.res.handle('delete')
+        self.assertEqual(self.res.endpoint, 'delete')
+
+    def test_endpoint_update_list(self):
+        self.res.handle('update_list')
+        self.assertEqual(self.res.endpoint, 'update_list')
+
+    def test_endpoint_create_detail(self):
+        self.res.handle('create_detail')
+        self.assertEqual(self.res.endpoint, 'create_detail')
+
+    def test_endpoint_delete_list(self):
+        self.res.handle('delete_list')
+        self.assertEqual(self.res.endpoint, 'delete_list')

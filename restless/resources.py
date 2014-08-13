@@ -77,6 +77,7 @@ class Resource(object):
         self.init_kwargs = kwargs
         self.request = None
         self.data = None
+        self.endpoint = None
         self.status = 200
 
     @classmethod
@@ -270,6 +271,7 @@ class Resource(object):
 
         :returns: A response object
         """
+        self.endpoint = endpoint
         method = self.request_method()
 
         try:
