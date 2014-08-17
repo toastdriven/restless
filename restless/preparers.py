@@ -103,10 +103,10 @@ class FieldsPreparer(Preparer):
 
         if isinstance(data, dict):
             # Dictionary enough for us.
-            value = data.get(part)
-        else:
+            value = data[part]
+        elif data is not None:
             # Assume it's an object.
-            value = getattr(data, part, None)
+            value = getattr(data, part)
 
         if not remaining_lookup:
             return value
