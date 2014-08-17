@@ -101,12 +101,12 @@ class FieldsPreparer(Preparer):
         part = parts[0]
         remaining_lookup = '.'.join(parts[1:])
 
-        if hasattr(data, 'keys') and hasattr(data, '__getitem__'):
+        if isinstance(data, dict):
             # Dictionary enough for us.
-            value = data[part]
+            value = data.get(part)
         else:
             # Assume it's an object.
-            value = getattr(data, part)
+            value = getattr(data, part, None)
 
         if not remaining_lookup:
             return value
