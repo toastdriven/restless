@@ -127,7 +127,7 @@ manually or (once again) by extending a built-in method.::
         # Finally, extend the URLs.
         @classmethod
         def urls(cls, name_prefix=None):
-            urlpatterns = super(PostResource, cls).urls(cls, name_prefix=name_prefix)
+            urlpatterns = super(PostResource, cls).urls(name_prefix=name_prefix)
             return urlpatterns + patterns('',
                 url(r'^schema/$', cls.as_view('schema'), name=cls.build_url_name('schema', name_prefix)),
             )
