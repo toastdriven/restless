@@ -4,3 +4,5 @@ pytest-cov==1.6
 Django==1.6.1
 Flask==0.10.1
 pyramid==1.4.5
+tornado==3.2.2
+

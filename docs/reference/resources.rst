@@ -42,3 +42,10 @@ restless.it
 .. automodule:: restless.it
    :members:
    :undoc-members:
+
+
+restless.tnd
+------------
+
+.. autoclass:: restless.tnd.TornadoResource
+    :members: as_detail, as_list, request, application, _request_handler_base_, r_handler
