@@ -1,5 +1,4 @@
-import datetime
-import decimal
+import six
 import unittest
 
 from restless.exceptions import HttpError, NotFound, MethodNotImplemented
@@ -50,16 +49,28 @@ class ResourceTestCase(unittest.TestCase):
         self.assertEqual(self.res.request_method(), 'DELETE')
 
     def test_request_body(self):
-        self.assertEqual(self.res.request_body(), '')
+        if six.PY3:
+            self.assertEqual(self.res.request_body(), b'')
+        else:
+            self.assertEqual(self.res.request_body(), '')
 
         self.res.request = FakeHttpRequest('POST', '{"hello": "world"}')
-        self.assertEqual(self.res.request_body(), '{"hello": "world"}')
+        if six.PY3:
+            self.assertEqual(self.res.request_body(), b'{"hello": "world"}')
+        else:
+            self.assertEqual(self.res.request_body(), '{"hello": "world"}')
 
         self.res.request = FakeHttpRequest('PUT', '{"hello": "world"}')
-        self.assertEqual(self.res.request_body(), '{"hello": "world"}')
+        if six.PY3:
+            self.assertEqual(self.res.request_body(), b'{"hello": "world"}')
+        else:
+            self.assertEqual(self.res.request_body(), '{"hello": "world"}')
 
         self.res.request = FakeHttpRequest('DELETE', '{}')
-        self.assertEqual(self.res.request_body(), '{}')
+        if six.PY3:
+            self.assertEqual(self.res.request_body(), b'{}')
+        else:
+            self.assertEqual(self.res.request_body(), '{}')
 
     def test_build_response(self):
         resp = self.res.build_response('Hello, world!')

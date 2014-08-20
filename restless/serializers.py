@@ -42,7 +42,6 @@ class Serializer(object):
         raise NotImplementedError("Subclasses must implement this method.")
 
 
-
 class JSONSerializer(Serializer):
     def deserialize(self, body):
         """
@@ -59,6 +58,8 @@ class JSONSerializer(Serializer):
         :returns: The deserialized data
         :rtype: ``list`` or ``dict``
         """
+        if isinstance(body, bytes):
+            return json.loads(body.decode('utf-8'))
         return json.loads(body)
 
     def serialize(self, data):
