@@ -344,6 +344,14 @@ framework, we'll use those as an example...::
 
 
     class UserResource(DjangoResource):
+        preparer = FieldsPreparer(fields={
+            "id": "id",
+            "username": "username",
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "email": "email",
+        })
+
         def create(self):
             # We can create a bound form from the get-go.
             form = UserForm(self.data)
@@ -376,6 +384,14 @@ up your code into a validation method. An example of this might look like...::
 
 
     class UserResource(DjangoResource):
+        preparer = FieldsPreparer(fields={
+            "id": "id",
+            "username": "username",
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "email": "email",
+        })
+
         def validate_user(self):
             form = UserForm(self.data)
 
