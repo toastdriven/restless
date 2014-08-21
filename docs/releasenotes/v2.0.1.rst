@@ -1,0 +1,25 @@
+restless v2.0.1
+===============
+
+:date: 2014-08-20
+
+This release has many bugfixes & introduces support for Tornado.
+
+
+Features
+--------
+
+* Tornado support. (SHA: 2f8abcb)
+* Enabled testing for Python 3.4. (SHA: 67cd126)
+* Added a ``endpoint`` variable onto ``Resource``. (SHA: da162dd)
+* Added coveralls for coverage checking. (SHA: ec42c8b)
+
+
+Bugfixes
+--------
+
+* Updated the tutorial around creating data. (SHA: 542914f)
+* Removed an erroneous underscore in the Flask docs. (SHA: 691b388)
+* Fixed ``JSONSerializer`` determining if ``str`` or ``bytes``. (SHA: 5376ac2)
+* Corrected an example in the "Extending" docs. (SHA: b39bca5)
+* Fixed docs in the validation docs. (SHA: 691b388)
