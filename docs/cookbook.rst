@@ -22,7 +22,7 @@ If you need a more fine graned authentication you could check your current endpo
 
     class MyResource(DjangoResource):
         def is_authenticated(self):
-            if self.endpoint == 'update' or self.endpoint == 'create':
+            if self.endpoint in ('update', 'create'):
                 return self.request.user.is_authenticated()
             else:
                 return True
