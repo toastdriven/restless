@@ -81,7 +81,7 @@ behavior of the various `REST methods`_.
 .. _Flask: http://flask.pocoo.org/
 .. _Pyramid: http://www.pylonsproject.org/
 .. _Itty: https://pypi.python.org/pypi/itty
-.. _`REST methods`: http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_Web_Services
+.. _`REST methods`: http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services
 
 
 About Resources
