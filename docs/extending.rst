@@ -374,7 +374,7 @@ up your code into a validation method. An example of this might look like...::
     from django.forms import ModelForm
 
     from restless.dj import DjangoResource
-    from restless.exceptions import HttpError
+    from restless.exceptions import BadRequest
 
 
     class UserForm(ModelForm):
