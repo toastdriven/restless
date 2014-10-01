@@ -92,7 +92,10 @@ class FieldsPreparer(Preparer):
             'hello'
             >>> lookup_data('person.name', data)
             'daniel'
-
+            >>> lookup_data('greeting.se', data)
+            None
+            >>> lookup_data('idontexist', data)
+            None
         """
         value = data
         parts = lookup.split('.')
@@ -104,13 +107,15 @@ class FieldsPreparer(Preparer):
         remaining_lookup = '.'.join(parts[1:])
 
         if hasattr(data, 'keys') and hasattr(data, '__getitem__'):
-            # Dictionary enough for us.
-            value = data[part]
-        else:
-            # Assume it's an object.
-            value = getattr(data, part)
 
-        if not remaining_lookup:
+            # Dictionary enough for us.
+            value = data.get(part, None)
+        else:
+
+            # Assume it's an object.
+            value = getattr(data, part, None)
+
+        if not remaining_lookup or not value:
             return value
 
         # There's more to lookup, so dive in recursively.
