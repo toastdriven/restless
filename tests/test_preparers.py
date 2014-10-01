@@ -32,7 +32,7 @@ class LookupDataTestCase(unittest.TestCase):
                     awesome=True,
                     depth=3
                 ),
-            },
+            }
         }
 
     def test_dict_simple(self):
@@ -51,18 +51,21 @@ class LookupDataTestCase(unittest.TestCase):
         self.assertEqual(self.preparer.lookup_data('moof.buried.id', self.obj_data), 7)
         self.assertEqual(self.preparer.lookup_data('moof.buried.data.yes', self.obj_data), 'no')
 
+    def test_dict_nullable_fk(self):
+        self.assertEqual(self.preparer.lookup_data('more.this_does_not_exist', self.dict_data), None)
+
+    def test_obj_nullable_fk(self):
+        self.assertEqual(self.preparer.lookup_data('moof.this_does_not_exist', self.obj_data), None)
+
     def test_dict_miss(self):
-        with self.assertRaises(KeyError):
-            self.preparer.lookup_data('another', self.dict_data)
+        self.assertEqual(self.preparer.lookup_data('another', self.dict_data), None)
 
     def test_obj_miss(self):
-        with self.assertRaises(AttributeError):
-            self.preparer.lookup_data('whee', self.obj_data)
+        self.assertEqual(self.preparer.lookup_data('whee', self.obj_data), None)
 
     def test_empty_lookup(self):
         # We could possibly get here in the recursion.
         self.assertEqual(self.preparer.lookup_data('', 'Last value'), 'Last value')
 
     def test_complex_miss(self):
-        with self.assertRaises(AttributeError):
-            self.preparer.lookup_data('more.nested.nope', self.dict_data)
+        self.assertEquals(self.preparer.lookup_data('more.nested.nope', self.dict_data), None)
