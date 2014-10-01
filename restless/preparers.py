@@ -2,8 +2,8 @@ class Preparer(object):
     """
     A plain preparation object which just passes through data.
 
-    It also is relevant as the protocol subclasses should implement to work with
-    Restless.
+    It also is relevant as the protocol subclasses should implement to
+    work with Restless.
     """
     def __init__(self):
         super(Preparer, self).__init__()
@@ -41,8 +41,8 @@ class FieldsPreparer(Preparer):
 
     def prepare(self, data):
         """
-        Handles transforming the provided data into the fielded data that should
-        be exposed to the end user.
+        Handles transforming the provided data into the fielded data that
+        should be exposed to the end user.
 
         Uses the ``lookup_data`` method to traverse dotted paths.
 
@@ -51,6 +51,7 @@ class FieldsPreparer(Preparer):
         result = {}
 
         if not self.fields:
+
             # No fields specified. Serialize everything.
             return data
 
@@ -61,15 +62,16 @@ class FieldsPreparer(Preparer):
 
     def lookup_data(self, lookup, data):
         """
-        Given a lookup string, attempts to descend through nested data looking for
-        the value.
+        Given a lookup string, attempts to descend through nested data looking
+        for the value.
 
-        Can work with either dictionary-alikes or objects (or any combination of
-        those).
+        Can work with either dictionary-alikes or objects (or any combination
+        of those).
 
         Lookups should be a string. If it is a dotted path, it will be split on
-        ``.`` & it will traverse through to find the final value. If not, it will
-        simply attempt to find either a key or attribute of that name & return it.
+        ``.`` & it will traverse through to find the final value. If not, it
+        will simply attempt to find either a key or attribute of that name &
+        return it.
 
         Example::
 
