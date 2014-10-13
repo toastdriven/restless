@@ -21,7 +21,8 @@ class LookupDataTestCase(unittest.TestCase):
                     'id': 7,
                     'data': InstaObj(yes='no')
                 }
-            }
+            },
+            parent=None
         )
         self.dict_data = {
             'hello': 'world',
@@ -33,6 +34,7 @@ class LookupDataTestCase(unittest.TestCase):
                     depth=3
                 ),
             },
+            'parent': None,
         }
 
     def test_dict_simple(self):
@@ -58,6 +60,12 @@ class LookupDataTestCase(unittest.TestCase):
     def test_obj_miss(self):
         with self.assertRaises(AttributeError):
             self.preparer.lookup_data('whee', self.obj_data)
+
+    def test_dict_nullable_fk(self):
+        self.assertEqual(self.preparer.lookup_data('parent.id', self.dict_data), None)
+
+    def test_obj_nullable_fk(self):
+        self.assertEqual(self.preparer.lookup_data('parent.id', self.obj_data), None)
 
     def test_empty_lookup(self):
         # We could possibly get here in the recursion.

@@ -104,7 +104,7 @@ class FieldsPreparer(Preparer):
         if hasattr(data, 'keys') and hasattr(data, '__getitem__'):
             # Dictionary enough for us.
             value = data[part]
-        else:
+        elif data is not None:
             # Assume it's an object.
             value = getattr(data, part)
 
