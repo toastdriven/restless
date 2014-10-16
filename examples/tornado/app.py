@@ -2,9 +2,22 @@ import tornado.ioloop
 from tornado import web, gen
 from restless.tnd import TornadoResource
 
-class PetResource(TornadoResource):
+
+class BaseHandler(web.RequestHandler):
+
     def prepare(self):
-        self.fake_db = {
+        """ do normal tornado preparation """
+
+    def initialize(self):
+        """ do your tornado initialization """
+
+class PetResource(TornadoResource):
+
+    # bind BaseHandler instead of tornado.web.RequestHandler
+    _request_handler_base_ = BaseHandler
+
+    def __init__(self):
+        self.fake_db = [
             {
                 "id": 1,
                 "name": "Mitti",
@@ -15,7 +28,8 @@ class PetResource(TornadoResource):
                 "name": "Gary",
                 "type": "cat"
             }
-        }
+        ]
+
 
     @gen.coroutine
     def list(self):
