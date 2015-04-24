@@ -15,8 +15,25 @@ def skip_prepare(func):
     """
     def _wrapper(self, *args, **kwargs):
         value = func(self, *args, **kwargs)
+        if isinstance(value, Data):
+            value.should_prepare = False
+            return value
         return Data(value, should_prepare=False)
     return _wrapper
+
+def status(status_code=200):
+    """
+    A convenience decorator for changing the status_code of a request.
+    """
+    def status_wrapper(func):
+        def _wrapper(self, *args, **kwargs):
+            value = func(self, *args, **kwargs)
+            if isinstance(value, Data):
+                value.status = status_code
+                return value
+            return Data(value, status=status_code)
+        return _wrapper
+    return status_wrapper
 
 
 class Resource(object):
@@ -295,7 +312,9 @@ class Resource(object):
         except Exception as err:
             return self.handle_error(err)
 
-        status = self.status_map.get(self.http_methods[endpoint][method], OK)
+        status = getattr(data, 'status', None)
+        if not status:
+            status = self.status_map.get(self.http_methods[endpoint][method], OK)
         return self.build_response(serialized, status=status)
 
     def handle_error(self, err):
@@ -432,8 +451,10 @@ class Resource(object):
 
         # Check for a ``Data``-like object. We should assume ``True`` (all
         # data gets prepared) unless it's explicitly marked as not.
-        if not getattr(data, 'should_prepare', True):
+        if hasattr(data, 'value') and not getattr(data, 'should_prepare', True):
             prepped_data = data.value
+        elif hasattr(data, 'value'):
+            prepped_data = [self.prepare(item) for item in data.value]
         else:
             prepped_data = self.prepare(data)
 

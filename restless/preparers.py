@@ -1,3 +1,6 @@
+from .data import Data
+
+
 class Preparer(object):
     """
     A plain preparation object which just passes through data.
