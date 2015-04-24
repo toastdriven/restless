@@ -93,7 +93,7 @@ class DjTestResource(DjangoResource):
 
     @status(201)
     def changed_status(self):
-        return {}
+        return self.fake_db
 
     @skip_prepare
     def schema(self):
@@ -369,14 +369,38 @@ class DjangoResourceTestCase(unittest.TestCase):
             'title': 'Moved hosts'
         })
 
-    def test_changed_status_code(self):
+    def test_status_code_changed_with_models(self):
         status_endpoint = DjTestResource.as_view('changed_status')
         req = FakeHttpRequest('GET')
 
         resp = status_endpoint(req)
+        schema = json.loads(resp.content.decode('utf-8'))
+        print(schema)
         self.assertEqual(resp.status_code, 201)
+        self.assertEqual(json.loads(resp.content.decode('utf-8')),
+            [
+                {
+                    'author': 'daniel',
+                    'body': 'Hello world!',
+                    'id': 2,
+                    'title': 'First post'
+                },
+                {
+                    'author': 'daniel',
+                    'body': 'Stuff here.',
+                    'id': 4,
+                    'title': 'Another'
+                },
+                {
+                    'author': 'daniel',
+                    'body': "G'bye!",
+                    'id': 5,
+                    'title': 'Last'
+                }
+            ]
+        )
 
-    def test_changed_status_code(self):
+    def test_skipped_prepare_and_status_code_changed(self):
         status_and_schema_endpoint = DjTestResource.as_view('status_and_schema')
         req = FakeHttpRequest('GET')
 
@@ -386,7 +410,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         schema = json.loads(resp.content.decode('utf-8'))
         self.assertEqual({'status': 'ok'}, schema)
 
-    def test_changed_status_code2(self):
+    def test_changed_status_code_and_skipped_prepare(self):
         status_and_schema2_endpoint = DjTestResource.as_view('status_and_schema2')
         req = FakeHttpRequest('GET')
 

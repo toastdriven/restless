@@ -428,8 +428,11 @@ class Resource(object):
 
         # Check for a ``Data``-like object. We should assume ``True`` (all
         # data gets prepared) unless it's explicitly marked as not.
-        if not getattr(data, 'should_prepare', True):
-            prepped_data = data.value
+        if isinstance(data, Data):
+            if not getattr(data, 'should_prepare', True):
+                prepped_data = data.value
+            else:
+                prepped_data = [self.prepare(item) for item in data.value]
         else:
             prepped_data = [self.prepare(item) for item in data]
 
@@ -451,8 +454,11 @@ class Resource(object):
 
         # Check for a ``Data``-like object. We should assume ``True`` (all
         # data gets prepared) unless it's explicitly marked as not.
-        if not getattr(data, 'should_prepare', True):
-            prepped_data = data.value
+        if isinstance(data, Data):
+            if not getattr(data, 'should_prepare', True):
+                prepped_data = data.value
+            else:
+                prepped_data = [self.prepare(item) for item in data.value]
         else:
             prepped_data = self.prepare(data)
 
