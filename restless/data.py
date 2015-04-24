@@ -1,5 +1,5 @@
 class Data(object):
-    def __init__(self, value, should_prepare=True, prepare_with=None):
+    def __init__(self, value, should_prepare=True, prepare_with=None, status=None):
         """
         A container object that carries meta information about the data.
 
@@ -14,5 +14,6 @@ class Data(object):
         callable. Default is ``None`` (no custom callable).
         """
         self.value = value
+        self.status = status
         self.should_prepare = should_prepare
         self.prepare_with = prepare_with

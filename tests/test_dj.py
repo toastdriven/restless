@@ -10,7 +10,7 @@ settings.configure(DEBUG=True)
 from restless.dj import DjangoResource
 from restless.exceptions import Unauthorized
 from restless.preparers import FieldsPreparer
-from restless.resources import skip_prepare
+from restless.resources import skip_prepare, status
 from restless.utils import json
 
 from .fakes import FakeHttpRequest, FakeModel
@@ -31,7 +31,16 @@ class DjTestResource(DjangoResource):
         self.http_methods.update({
             'schema': {
                 'GET': 'schema',
-            }
+            },
+            'changed_status': {
+                'GET': 'changed_status',
+            },
+            'status_and_schema': {
+                'GET': 'status_and_schema',
+            },
+            'status_and_schema2': {
+                'GET': 'status_and_schema2',
+            },
         })
 
     def fake_init(self):
@@ -82,6 +91,10 @@ class DjTestResource(DjangoResource):
     def create_detail(self):
         raise ValueError("This is a random & crazy exception.")
 
+    @status(201)
+    def changed_status(self):
+        return {}
+
     @skip_prepare
     def schema(self):
         # A WILD SCHEMA VIEW APPEARS!
@@ -113,6 +126,21 @@ class DjTestResource(DjangoResource):
             'allowed_list_http_methods': ['GET', 'POST'],
             'allowed_detail_http_methods': ['GET', 'PUT', 'DELETE'],
         }
+
+    @skip_prepare
+    @status(301)
+    def status_and_schema(self):
+        return {
+            'status': 'ok',
+        }
+
+    @status(202)
+    @skip_prepare
+    def status_and_schema2(self):
+        return {
+            'status': 'ok',
+        }
+
 
 
 class DjTestResourceHttp404Handling(DjTestResource):
@@ -340,3 +368,30 @@ class DjangoResourceTestCase(unittest.TestCase):
             'id': 6,
             'title': 'Moved hosts'
         })
+
+    def test_changed_status_code(self):
+        status_endpoint = DjTestResource.as_view('changed_status')
+        req = FakeHttpRequest('GET')
+
+        resp = status_endpoint(req)
+        self.assertEqual(resp.status_code, 201)
+
+    def test_changed_status_code(self):
+        status_and_schema_endpoint = DjTestResource.as_view('status_and_schema')
+        req = FakeHttpRequest('GET')
+
+        resp = status_and_schema_endpoint(req)
+        self.assertEqual(resp.status_code, 301)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        schema = json.loads(resp.content.decode('utf-8'))
+        self.assertEqual({'status': 'ok'}, schema)
+
+    def test_changed_status_code2(self):
+        status_and_schema2_endpoint = DjTestResource.as_view('status_and_schema2')
+        req = FakeHttpRequest('GET')
+
+        resp = status_and_schema2_endpoint(req)
+        self.assertEqual(resp.status_code, 202)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        schema = json.loads(resp.content.decode('utf-8'))
+        self.assertEqual({'status': 'ok'}, schema)
