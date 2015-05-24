@@ -1,6 +1,7 @@
 import datetime
 from decimal import Decimal
 import unittest
+import uuid
 
 from restless.serializers import JSONSerializer
 
@@ -17,6 +18,7 @@ class JSONSerializerTestCase(unittest.TestCase):
                 # Some data the usual JSON encoder can't handle...
                 'nested': datetime.datetime(2014, 3, 30, 12, 55, 15),
                 'again': Decimal('18.9'),
+                'uuid': uuid.uuid4()
             },
         }
 
