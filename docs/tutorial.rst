@@ -597,7 +597,7 @@ http://127.0.0.1:8000/api/posts/3/).
 We can also update it. Restless expects **complete** bodies (don't try to send
 partial updates, that's typically reserved for ``PATCH``).::
 
-    $ curl -X POST -H "Content-Type: application/json" -d '{"title": "Another new library released!", "author": "daniel", "body": "I just released a new piece of software!"}' http://127.0.0.1:8000/api/posts/3/
+    $ curl -X PUT -H "Content-Type: application/json" -d '{"title": "Another new library released!", "author": "daniel", "body": "I just released a new piece of software!"}' http://127.0.0.1:8000/api/posts/3/
 
 And we can delete our new data if we decide we don't like it.::
 
