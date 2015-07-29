@@ -37,6 +37,19 @@ class FlaskResource(Resource):
 
         return _wrapper
 
+    @classmethod
+    def as_view(cls, route, *init_args, **init_kwargs):
+        # Overridden here, because Flask uses a global ``request`` object
+        # rather than passing it to each view.
+        def _wrapper(*args, **kwargs):
+            # Make a new instance so that no state potentially leaks between
+            # instances.
+            inst = cls(*init_args, **init_kwargs)
+            inst.request = request
+            return inst.handle(route, *args, **kwargs)
+
+        return _wrapper
+
     def request_body(self):
         return self.request.data
 
