@@ -89,7 +89,7 @@ class FlaskResource(Resource):
         return '_'.join([endpoint_prefix, name])
 
     @classmethod
-    def add_url_rules(cls, app, rule_prefix, endpoint_prefix=None):
+    def add_url_rules(cls, app, rule_prefix, endpoint_prefix=None, pk='pk', pk_type='int'):
         """
         A convenience method for hooking up the URLs.
 
@@ -111,14 +111,17 @@ class FlaskResource(Resource):
         """
         methods = ['GET', 'POST', 'PUT', 'DELETE']
 
+        collection_rule = rule_prefix
         app.add_url_rule(
-            rule_prefix,
+            collection_rule,
             endpoint=cls.build_endpoint_name('list', endpoint_prefix),
             view_func=cls.as_list(),
             methods=methods
         )
+
+        instance_rule = '{}<{}:{}>/'.format(rule_prefix, pk_type, pk)
         app.add_url_rule(
-            rule_prefix + '<pk>/',
+            instance_rule,
             endpoint=cls.build_endpoint_name('detail', endpoint_prefix),
             view_func=cls.as_detail(),
             methods=methods
