@@ -1,3 +1,5 @@
+from functools import wraps
+import six
 import sys
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
@@ -131,6 +133,7 @@ class Resource(object):
 
         :returns: View function
         """
+        @wraps(cls)
         def _wrapper(request, *args, **kwargs):
             # Make a new instance so that no state potentially leaks between
             # instances.
