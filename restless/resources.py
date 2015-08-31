@@ -1,5 +1,6 @@
 import six
 import sys
+from functools import wraps
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .data import Data
@@ -13,6 +14,7 @@ def skip_prepare(func):
     """
     A convenience decorator for indicating the raw data should not be prepared.
     """
+    @wraps(func)
     def _wrapper(self, *args, **kwargs):
         value = func(self, *args, **kwargs)
         return Data(value, should_prepare=False)
