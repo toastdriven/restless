@@ -1,8 +1,9 @@
 six>=1.4.0
 pytest==2.5.2
 pytest-cov==1.6
+WebTest==2.0.18
 Django==1.6.1
 Flask==0.10.1
 pyramid==1.4.5
 tornado==3.2.2
-
+bottle==0.12.8
