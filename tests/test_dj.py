@@ -237,7 +237,7 @@ class DjangoResourceTestCase(unittest.TestCase):
             def bubble_exceptions(self):
                 return True
 
-        with self.assertRaises(Unauthorized):
+        with self.assertRaises(Unauthorized) as cm:
             bubb = Bubbly()
             bubb.request = FakeHttpRequest('DELETE')
             bubb.handle('list')

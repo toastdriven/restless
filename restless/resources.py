@@ -293,6 +293,11 @@ class Resource(object):
             data = view_method(*args, **kwargs)
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
+            # We need to capture & store the traceback details here, since
+            # we're passing the exception off to another function to raise.
+            # Without this, the stack trace for the error will be different &
+            # not as useful.
+            err._exc_info = sys.exc_info()
             return self.handle_error(err)
 
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
@@ -310,6 +315,12 @@ class Resource(object):
         :returns: A response object
         """
         if self.bubble_exceptions():
+            if hasattr(err, '_exc_info'):
+                six.reraise(*err._exc_info)
+
+            # The custom traceback storage bits of the default handling
+            # arent' present (likely overridden code).
+            # Raise what we have at least.
             raise err
 
         return self.build_error(err)
