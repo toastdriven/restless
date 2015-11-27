@@ -1,10 +1,33 @@
 import unittest
+import socket
+import six
 
 from restless.tnd import TornadoResource, _BridgeMixin
 from restless.utils import json
-from tornado import testing, web, httpserver, gen
+from tornado import testing, web, httpserver, gen, version_info
+from tornado.iostream import IOStream
 from restless.constants import UNAUTHORIZED
 
+def _newer_or_equal_(v):
+    for i in six.moves.xrange(min(len(v), len(version_info))):
+        expected, tnd = v[i], version_info[i]
+        if tnd > expected:
+            return True
+        elif tnd == expected:
+            continue
+        else:
+            return False
+    return True
+
+def _equal_(v):
+    for i in six.moves.xrange(min(len(v), len(version_info))):
+        if v[i] != version_info[i]:
+            return False
+    return True
+
+
+if _newer_or_equal_((4, 0, 0, 0)):
+    from tornado.http1connection import HTTP1Connection
 
 class TndBaseTestResource(TornadoResource):
     """
@@ -127,7 +150,7 @@ class TndResourceTestCase(BaseHTTPTestCase):
 
 class BaseTestCase(unittest.TestCase):
     """
-    test case that export the wrapped tornado.web.RequestHandler
+    test case that export the wrapped tornado.web.RequestHandler.
     """
     def init_request_handler(self, rh_cls, view_type):
         global app
@@ -136,7 +159,20 @@ class BaseTestCase(unittest.TestCase):
         elif view_type == 'detail':
             rq = rh_cls.as_detail()
 
-        fake_request = httpserver.HTTPRequest('GET', '/fake', body='test123')
+        # compose a fake incoming request
+        fake_connection = None
+
+        # after tornado 4.1, it's not allowed to build a RequestHandler without a connection.
+        if _newer_or_equal_((4, 0, 0, 0)):
+            ios = IOStream(socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0))
+            context = None
+
+            # there is a bug in these 2 version that would fail when
+            # context is None
+            if _equal_((4, 0, 1)) or _equal_((4, 0, 2)):
+                context = httpserver._HTTPRequestContext(ios, None, None)
+            fake_connection = HTTP1Connection(ios, False, context=context)
+        fake_request = httpserver.HTTPRequest('GET', '/fake', body='test123', connection=fake_connection)
         self.new_handler = rq(app, fake_request)
 
 
