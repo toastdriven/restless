@@ -21,12 +21,12 @@ class DjangoResource(Resource):
     """
     # Because Django.
     @classmethod
-    def as_list(self, *args, **kwargs):
-        return csrf_exempt(super(DjangoResource, self).as_list(*args, **kwargs))
+    def as_list(cls, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_list(*args, **kwargs))
 
     @classmethod
-    def as_detail(self, *args, **kwargs):
-        return csrf_exempt(super(DjangoResource, self).as_detail(*args, **kwargs))
+    def as_detail(cls, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_detail(*args, **kwargs))
 
     def is_debug(self):
         # By default, Django-esque.
