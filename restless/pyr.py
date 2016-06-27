@@ -1,6 +1,8 @@
 from pyramid.response import Response
 
+from .constants import OK, NO_CONTENT
 from .resources import Resource
+
 
 class PyramidResource(Resource):
     """
@@ -26,8 +28,13 @@ class PyramidResource(Resource):
 
         return _wrapper
 
-    def build_response(self, data, status=200):
-        resp = Response(data, status_code=status, content_type="application/json")
+    def build_response(self, data, status=OK):
+        if status == NO_CONTENT:
+            # Avoid crashing the client when it tries to parse nonexisting JSON.
+            content_type = 'text/plain'
+        else:
+            content_type = 'application/json'
+        resp = Response(data, status_code=status, content_type=content_type)
         return resp
 
     @classmethod
