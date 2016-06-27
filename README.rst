@@ -2,10 +2,8 @@
 restless
 ========
 
-.. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
-        :target: https://travis-ci.org/toastdriven/restless
-.. image:: https://coveralls.io/repos/toastdriven/restless/badge.png
-        :target: https://coveralls.io/r/toastdriven/restless
+.. image:: https://travis-ci.org/CraveFood/restless.png?branch=master
+        :target: https://travis-ci.org/CraveFood/restless
 
 A lightweight REST miniframework for Python.
 
@@ -150,24 +148,4 @@ BSD
 Running the Tests
 =================
 
-Getting the tests running looks like:
-
-.. code:: sh
-
-    $ virtualenv -p python3 env3
-    $ . env3/bin/activate
-    $ pip install -r test3_requirements.txt
-    $ export PYTHONPATH=`pwd`
-    $ py.test -s -v --cov=restless --cov-report=html tests
-
-For Python 2:
-
-.. code:: sh
-
-    $ virtualenv env2
-    $ . env2/bin/activate
-    $ pip install -r test2_requirements.txt
-    $ export PYTHONPATH=`pwd`
-    $ py.test -s -v --cov=restless --cov-report=html tests
-
-Coverage is at about 94%, so please don't make it worse. :D
+Just run `tox`.
