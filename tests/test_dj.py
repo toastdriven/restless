@@ -1,13 +1,18 @@
 import unittest
 
-from django.http import Http404
-from django.core.exceptions import ObjectDoesNotExist
+try:
+    from django.http import Http404
+    from django.core.exceptions import ObjectDoesNotExist
 
-# Ugh. Settings for Django.
-from django.conf import settings
-settings.configure(DEBUG=True)
+    # Ugh. Settings for Django.
+    from django.conf import settings
+    settings.configure(DEBUG=True)
 
-from restless.dj import DjangoResource
+    from restless.dj import DjangoResource
+except ImportError:
+    settings = None
+    DjangoResource = object
+
 from restless.exceptions import Unauthorized
 from restless.preparers import FieldsPreparer
 from restless.resources import skip_prepare
@@ -125,6 +130,7 @@ class DjTestResourceHttp404Handling(DjTestResource):
         raise Http404("Model with pk {0} not found.".format(pk))
 
 
+@unittest.skipIf(not settings, "Django is not available")
 class DjangoResourceTestCase(unittest.TestCase):
     def setUp(self):
         super(DjangoResourceTestCase, self).setUp()

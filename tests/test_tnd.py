@@ -2,11 +2,9 @@ import unittest
 import socket
 import six
 
-from restless.tnd import TornadoResource, _BridgeMixin
 from restless.utils import json
-from tornado import testing, web, httpserver, gen, version_info
-from tornado.iostream import IOStream
 from restless.constants import UNAUTHORIZED
+
 
 def _newer_or_equal_(v):
     for i in six.moves.xrange(min(len(v), len(version_info))):
@@ -19,15 +17,38 @@ def _newer_or_equal_(v):
             return False
     return True
 
+
 def _equal_(v):
     for i in six.moves.xrange(min(len(v), len(version_info))):
         if v[i] != version_info[i]:
             return False
     return True
 
+try:
+    from restless.tnd import TornadoResource, _BridgeMixin
+    from tornado import testing, web, httpserver, gen, version_info
+    from tornado.iostream import IOStream
+    if _newer_or_equal_((4, 0, 0, 0)):
+        from tornado.http1connection import HTTP1Connection
+except ImportError:
+    class testing:
+        AsyncHTTPTestCase = object
 
-if _newer_or_equal_((4, 0, 0, 0)):
-    from tornado.http1connection import HTTP1Connection
+    class web:
+        @staticmethod
+        def Application(*args, **kw): return False
+
+    class gen:
+        @staticmethod
+        def coroutine(fn): return fn
+
+    class TornadoResource:
+        @staticmethod
+        def as_list(): pass
+
+        @staticmethod
+        def as_detail(): pass
+
 
 class TndBaseTestResource(TornadoResource):
     """
@@ -89,6 +110,7 @@ app = web.Application([
 ], debug=True)
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class BaseHTTPTestCase(testing.AsyncHTTPTestCase):
     """
     base of test case
@@ -97,6 +119,7 @@ class BaseHTTPTestCase(testing.AsyncHTTPTestCase):
         return app
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class TndResourceTestCase(BaseHTTPTestCase):
     """
     """
@@ -148,6 +171,7 @@ class TndResourceTestCase(BaseHTTPTestCase):
         self.assertEqual(resp.code, UNAUTHORIZED)
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class BaseTestCase(unittest.TestCase):
     """
     test case that export the wrapped tornado.web.RequestHandler.
@@ -176,6 +200,7 @@ class BaseTestCase(unittest.TestCase):
         self.new_handler = rq(app, fake_request)
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class InternalTestCase(BaseTestCase):
     """
     test-cases that check internal structure of the wrapped
@@ -213,6 +238,7 @@ class InternalTestCase(BaseTestCase):
         self.assertTrue(hasattr(self.new_handler.resource_handler, 'application'))
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class TndDeleteTestResource(TndBasicTestResource):
     """
     testing inherited resource
@@ -224,6 +250,7 @@ class TndDeleteTestResource(TndBasicTestResource):
         self.fake_db = {}
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class FuncTrimTestCase(BaseTestCase):
     """
     test-cases that make sure we removed unnecessary handler functions
@@ -258,6 +285,7 @@ class FuncTrimTestCase(BaseTestCase):
         self.assertNotIn('put', self.new_handler.__class__.__dict__)
 
 
+@unittest.skipIf(not app, 'Tornado is not available')
 class TndAsyncResourceTestCase(BaseHTTPTestCase):
     """
     test asynchronous view_method

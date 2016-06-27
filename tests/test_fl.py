@@ -1,9 +1,13 @@
 import unittest
 
-# Ugh. Globals for Flask.
-import flask
+try:
+    # Ugh. Globals for Flask.
+    import flask
+    from restless.fl import FlaskResource
+except ImportError:
+    flask = None
+    FlaskResource = object
 
-from restless.fl import FlaskResource
 from restless.utils import json
 
 from .fakes import FakeHttpRequest
@@ -32,6 +36,7 @@ class FlTestResource(FlaskResource):
         self.fake_db.append(self.data)
 
 
+@unittest.skipIf(not flask, 'Flask is not available')
 class FlaskResourceTestCase(unittest.TestCase):
     def setUp(self):
         super(FlaskResourceTestCase, self).setUp()

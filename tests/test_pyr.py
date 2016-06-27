@@ -1,8 +1,12 @@
 import unittest
 
-from pyramid import testing
+try:
+    from pyramid import testing
+    from restless.pyr import PyramidResource
+except ImportError:
+    testing = None
+    PyramidResource = object
 
-from restless.pyr import PyramidResource
 from restless.utils import json
 
 from .fakes import FakeHttpRequest, FakeHttpResponse
@@ -36,6 +40,8 @@ class PyrTestResource(PyramidResource):
 
         return True
 
+
+@unittest.skipIf(not testing, 'Pyramid is not available')
 class PyramidResourceTestCase(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
