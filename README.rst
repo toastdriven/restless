@@ -148,4 +148,15 @@ BSD
 Running the Tests
 =================
 
-Just run `tox`.
+The test suite uses `tox` for simultaneous support of multiple versions of both
+Python and Django. The current versions of Python supported are:
+
+* CPython 2.7
+* CPython 3.4
+* CPython 3.5
+* PyPy (Python 2.7)
+* PyPy3 (Python 3.2)
+* PyPy3 beta (Python 3.3)
+
+You just need to install the Python interpreters above and the `tox` package
+(available via `pip`), then run the `tox` command.
