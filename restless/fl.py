@@ -1,6 +1,7 @@
 from flask import make_response
 from flask import request
 
+from .constants import OK, NO_CONTENT
 from .resources import Resource
 
 
@@ -44,9 +45,14 @@ class FlaskResource(Resource):
         from flask import current_app
         return current_app.debug
 
-    def build_response(self, data, status=200):
+    def build_response(self, data, status=OK):
+        if status == NO_CONTENT:
+            # Avoid crashing the client when it tries to parse nonexisting JSON.
+            content_type = 'text/plain'
+        else:
+            content_type = 'application/json'
         return make_response(data, status, {
-            'Content-Type': 'application/json'
+            'Content-Type': content_type,
         })
 
     @classmethod

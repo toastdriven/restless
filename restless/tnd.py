@@ -1,5 +1,5 @@
 from tornado import web, gen
-from .constants import OK
+from .constants import OK, NO_CONTENT
 from .resources import Resource
 from .exceptions import MethodNotImplemented, Unauthorized
 
@@ -128,8 +128,14 @@ class TornadoResource(Resource):
     def request_body(self):
         return self.request.body 
 
-    def build_response(self, data, status=200):
-        self.ref_rh.set_header("Content-Type", "application/json; charset=UTF-8")
+    def build_response(self, data, status=OK):
+        if status == NO_CONTENT:
+            # Avoid crashing the client when it tries to parse nonexisting JSON.
+            content_type = 'text/plain'
+        else:
+            content_type = 'application/json'
+        self.ref_rh.set_header("Content-Type", "{}; charset=UTF-8"
+                               .format(content_type))
 
         self.ref_rh.set_status(status)
         self.ref_rh.finish(data)

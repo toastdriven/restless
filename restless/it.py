@@ -1,6 +1,8 @@
 import re
 
 import itty
+
+from restless.constants import OK, NO_CONTENT
 from restless.resources import Resource
 
 
@@ -16,8 +18,13 @@ class IttyResource(Resource):
     def is_debug(self):
         return self.debug
 
-    def build_response(self, data, status=200):
-        return itty.Response(data, status=status, content_type='application/json')
+    def build_response(self, data, status=OK):
+        if status == NO_CONTENT:
+            # Avoid crashing the client when it tries to parse nonexisting JSON.
+            content_type = 'text/plain'
+        else:
+            content_type = 'application/json'
+        return itty.Response(data, status=status, content_type=content_type)
 
     @classmethod
     def setup_urls(cls, rule_prefix):
