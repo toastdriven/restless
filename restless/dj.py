@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 
+from .constants import OK, NO_CONTENT
 from .exceptions import NotFound
 from .resources import Resource
 
@@ -30,9 +31,14 @@ class DjangoResource(Resource):
         # By default, Django-esque.
         return settings.DEBUG
 
-    def build_response(self, data, status=200):
+    def build_response(self, data, status=OK):
         # By default, Django-esque.
-        resp = HttpResponse(data, content_type='application/json')
+        if status == NO_CONTENT:
+            # Avoid crashing the client when it tries to parse nonexisting JSON.
+            content_type = 'text/plain'
+        else:
+            content_type = 'application/json'
+        resp = HttpResponse(data, content_type=content_type)
         resp.status_code = status
         return resp
 
