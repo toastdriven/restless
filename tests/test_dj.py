@@ -60,7 +60,7 @@ class DjTestResource(DjangoResource):
         ]
 
     def is_authenticated(self):
-        if self.request_method() == 'DELETE':
+        if self.request_method() == 'DELETE' and self.endpoint == 'list':
             return False
 
         return True
@@ -93,6 +93,12 @@ class DjTestResource(DjangoResource):
             'code': 'random-crazy',
             'message': 'This is a random & crazy exception.',
         })
+
+    def delete(self, pk):
+        for i, item in enumerate(self.fake_db):
+            if item.id == pk:
+                del self.fake_db[i]
+                return
 
     @skip_prepare
     def schema(self):
@@ -356,3 +362,18 @@ class DjangoResourceTestCase(unittest.TestCase):
             'id': 6,
             'title': 'Moved hosts'
         })
+
+    def test_delete(self):
+        self.res.request = FakeHttpRequest('DELETE')
+        self.assertEqual(len(self.res.fake_db), 3)
+
+        resp = self.res.handle('detail', pk=2)
+        self.assertEqual(resp['Content-Type'], 'text/plain')
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(resp.content.decode('utf-8'), '')
+
+        # Check the internal state.
+        self.res.request = FakeHttpRequest('GET')
+        self.assertEqual(len(self.res.fake_db), 2)
+        resp = self.res.handle('detail', pk=2)
+        self.assertEqual(resp.status_code, 404)
