@@ -130,15 +130,15 @@ Hooking it up:
 .. code:: python
 
     # api/urls.py
-    from django.conf.urls.default import url, patterns, include
+    from django.conf.urls.default import url, include
 
     from posts.api import PostResource
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         # The usual suspects, then...
 
         url(r'^api/posts/', include(PostResource.urls())),
-    )
+    ]
 
 
 Licence

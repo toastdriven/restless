@@ -1,7 +1,7 @@
 import six
 
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt

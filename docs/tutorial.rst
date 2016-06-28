@@ -252,17 +252,17 @@ practice would be to create a URLconf just for the API portion of your site.::
 
     # The ``settings.ROOT_URLCONF`` file
     # myproject/urls.py
-    from django.conf.urls import patterns, url, include
+    from django.conf.urls import url, include
 
     # Add this!
     from posts.api import PostResource
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         # The usual fare, then...
 
         # Add this!
         url(r'api/posts/', include(PostResource.urls())),
-    )
+    ]
 
 Note that unlike some other CBVs (admin specifically), the ``urls`` here is a
 **METHOD**, not an attribute/property. Those parens are important!
@@ -272,13 +272,13 @@ Manual URLconfs
 
 You can also manually hook up URLs by specifying something like::
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         # ...
 
         # Identical to the above.
         url(r'api/posts/$', PostResource.as_list(), name='api_post_list'),
         url(r'api/posts/(?P<pk>\d+)/$', PostResource.as_detail(), name='api_post_detail'),
-    )
+    ]
 
 
 Testing the API
