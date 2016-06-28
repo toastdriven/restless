@@ -80,7 +80,10 @@ class DjTestResource(DjangoResource):
                     return
 
     def create_detail(self):
-        raise ValueError("This is a random & crazy exception.")
+        raise ValueError({
+            'code': 'random-crazy',
+            'message': 'This is a random & crazy exception.',
+        })
 
     @skip_prepare
     def schema(self):
@@ -252,7 +255,10 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 500)
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
-            'error': 'This is a random & crazy exception.'
+            'error': {
+                'code': 'random-crazy',
+                'message': 'This is a random & crazy exception.',
+            }
         })
 
     def test_object_does_not_exist(self):
