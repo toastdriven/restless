@@ -82,9 +82,9 @@ class DjangoResource(Resource):
             ``api_blogpost_list``
         :type name_prefix: string
 
-        :returns: A ``patterns`` object for ``include(...)``
+        :returns: A list of ``url`` objects for ``include(...)``
         """
-        return patterns('',
+        return [
             url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
             url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
-        )
+        ]
