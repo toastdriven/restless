@@ -86,5 +86,5 @@ class DjangoResource(Resource):
         """
         return patterns('',
             url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
-            url(r'^(?P<pk>\d+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
+            url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
         )
