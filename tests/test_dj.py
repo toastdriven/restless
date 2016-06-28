@@ -367,7 +367,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.res.request = FakeHttpRequest('DELETE')
         self.assertEqual(len(self.res.fake_db), 3)
 
-        resp = self.res.handle('detail', pk=2)
+        resp = self.res.handle('detail', pk='de-faced')
         self.assertEqual(resp['Content-Type'], 'text/plain')
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.content.decode('utf-8'), '')
@@ -375,5 +375,5 @@ class DjangoResourceTestCase(unittest.TestCase):
         # Check the internal state.
         self.res.request = FakeHttpRequest('GET')
         self.assertEqual(len(self.res.fake_db), 2)
-        resp = self.res.handle('detail', pk=2)
+        resp = self.res.handle('detail', pk='de-faced')
         self.assertEqual(resp.status_code, 404)
