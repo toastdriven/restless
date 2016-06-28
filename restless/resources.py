@@ -208,7 +208,7 @@ class Resource(object):
         :returns: A response object
         """
         data = {
-            'error': err.message,
+            'error': err.args[0],
         }
 
         if self.is_debug():
