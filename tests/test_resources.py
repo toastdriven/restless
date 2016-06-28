@@ -9,9 +9,7 @@ from restless.utils import json
 from .fakes import FakeHttpRequest, FakeHttpResponse
 
 
-class NonDjangoResource(Resource):
-    # Because the default implementation is a tiny-bit Django-specific,
-    # we're faking some things here.
+class GenericResource(Resource):
     def build_response(self, data, status=200):
         resp = FakeHttpResponse(data, content_type='application/json')
         resp.status_code = status
@@ -21,11 +19,11 @@ class NonDjangoResource(Resource):
     def is_authenticated(self):
         if self.endpoint == 'list':
             return False
-        return super(NonDjangoResource, self).is_authenticated()
+        return super(GenericResource, self).is_authenticated()
 
 
 class ResourceTestCase(unittest.TestCase):
-    resource_class = NonDjangoResource
+    resource_class = GenericResource
 
     def setUp(self):
         super(ResourceTestCase, self).setUp()

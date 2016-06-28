@@ -27,11 +27,9 @@ class DjangoResource(Resource):
         return csrf_exempt(super(DjangoResource, self).as_detail(*args, **kwargs))
 
     def is_debug(self):
-        # By default, Django-esque.
         return settings.DEBUG
 
     def build_response(self, data, status=200):
-        # By default, Django-esque.
         resp = HttpResponse(data, content_type='application/json')
         resp.status_code = status
         return resp
