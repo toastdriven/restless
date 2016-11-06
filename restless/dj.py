@@ -2,7 +2,14 @@ import six
 
 from django import get_version as get_django_version
 from django.conf import settings
-from django.conf.urls import patterns, url
+
+if get_django_version() >= '1.10.0':
+    # patterns removed in 1.10
+    # see: https://docs.djangoproject.com/en/1.10/releases/1.10/#features-removed-in-1-10
+    from django.conf.urls import url
+else:
+    from django.conf.urls import patterns, url
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -90,6 +97,8 @@ class DjangoResource(Resource):
                 url(r'^(?P<pk>\d+)/$', cls.as_detail(),
                     name=cls.build_url_name('detail', name_prefix))]
 
-        if get_django_version() >= '1.7.0':
+        if get_django_version() >= '1.10.0':
+            # patterns removed in 1.10, not 1.7
+            # see: https://docs.djangoproject.com/en/1.10/releases/1.10/#features-removed-in-1-10
             return urls
         return patterns('', urls[0], urls[1])
