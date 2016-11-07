@@ -2,8 +2,9 @@ import six
 
 from django import get_version as get_django_version
 from django.conf import settings
+from distutils.version import StrictVersion
 
-if get_django_version() >= '1.10.0':
+if StrictVersion(get_django_version()) >= StrictVersion("1.10"):
     # patterns removed in 1.10
     # see: https://docs.djangoproject.com/en/1.10/releases/1.10/#features-removed-in-1-10
     from django.conf.urls import url
@@ -97,7 +98,7 @@ class DjangoResource(Resource):
                 url(r'^(?P<pk>\d+)/$', cls.as_detail(),
                     name=cls.build_url_name('detail', name_prefix))]
 
-        if get_django_version() >= '1.10.0':
+        if StrictVersion(get_django_version()) >= StrictVersion("1.10"):
             # patterns removed in 1.10, not 1.7
             # see: https://docs.djangoproject.com/en/1.10/releases/1.10/#features-removed-in-1-10
             return urls
