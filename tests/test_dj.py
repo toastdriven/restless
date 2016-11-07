@@ -340,3 +340,17 @@ class DjangoResourceTestCase(unittest.TestCase):
             'id': 6,
             'title': 'Moved hosts'
         })
+
+
+class DjangoBackwardCompatibilityTest(unittest.TestCase):
+    def setUp(self):
+        from restless.dj import DjangoResource
+        super(DjangoBackwardCompatibilityTest, self).setUp()
+        self.res = DjangoResource()
+
+    def test_django_1_10_compatibility(self):
+        # patterns removed in 1.10
+        # see: https://docs.djangoproject.com/en/1.10/releases/1.10/#features-removed-in-1-10
+
+        # must not raise Import Error.
+        _ = self.res.urls()
