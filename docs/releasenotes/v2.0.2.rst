@@ -5,7 +5,7 @@ restless v2.0.2
 
 This release makes some long-needed changes on error handling for ``Resource``
 and its subclasses, plus support for both Django >= 1.9 and Tornado >= 4.0 and
-allowing alphanumeric PKs on all suppoerted frameworks.
+allowing alphanumeric PKs on all supported frameworks.
 
 
 Features
