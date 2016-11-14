@@ -101,7 +101,7 @@ class FieldsPreparer(Preparer):
         part = parts[0]
         remaining_lookup = '.'.join(parts[1:])
 
-        if hasattr(data, 'keys') and hasattr(data, '__getitem__'):
+        if callable(getattr(data, 'keys', None)) and hasattr(data, '__getitem__'):
             # Dictionary enough for us.
             value = data[part]
         elif data is not None:
