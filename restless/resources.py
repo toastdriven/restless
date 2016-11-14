@@ -4,7 +4,7 @@ import sys
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .data import Data
 from .exceptions import MethodNotImplemented, Unauthorized
-from .preparers import Preparer, FieldsPreparer
+from .preparers import Preparer
 from .serializers import JSONSerializer
 from .utils import format_traceback
 
@@ -145,9 +145,8 @@ class Resource(object):
         """
         Returns the HTTP method for the current request.
 
-        The default implementation is Django-specific, so if you're integrating
-        with a new web framework, you'll need to override this method within
-        your subclass.
+        If you're integrating with a new web framework, you might need to
+        override this method within your subclass.
 
         :returns: The HTTP method in uppercase
         :rtype: string
@@ -161,9 +160,8 @@ class Resource(object):
 
         Useful for deserializing the content the user sent (typically JSON).
 
-        The default implementation is Django-specific, so if you're integrating
-        with a new web framework, you'll need to override this method within
-        your subclass.
+        If you're integrating with a new web framework, you might need to
+        override this method within your subclass.
 
         :returns: The body of the request
         :rtype: string
@@ -175,9 +173,8 @@ class Resource(object):
         """
         Given some data, generates an HTTP response.
 
-        The default implementation is Django-specific, so if you're integrating
-        with a new web framework, you'll need to override this method within
-        your subclass.
+        If you're integrating with a new web framework, you **MUST**
+        override this method within your subclass.
 
         :param data: The body of the response to send
         :type data: string
@@ -188,13 +185,7 @@ class Resource(object):
 
         :returns: A response object
         """
-        # TODO: Remove the Django.
-        #       This should be plain old WSGI by default, if possible.
-        # By default, Django-esque.
-        from django.http import HttpResponse
-        resp = HttpResponse(data, content_type='application/json')
-        resp.status_code = status
-        return resp
+        raise NotImplementedError()
 
     def build_error(self, err):
         """
