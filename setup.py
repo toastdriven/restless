@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='restless',
-    version='2.0.2-dev',
+    version='2.0.2',
     description='A lightweight REST miniframework for Python.',
     author='Daniel Lindsley',
     author_email='daniel@toastdriven.com',
@@ -22,6 +22,7 @@ setup(
     ],
     tests_require=[
         'mock',
+        'tox',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

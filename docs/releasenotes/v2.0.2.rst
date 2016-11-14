@@ -1,0 +1,38 @@
+restkiss v2.0.2
+===============
+
+:date: 2016-11-14
+
+This release makes some long-needed changes on error handling for ``Resource``
+and its subclasses, plus support for both Django >= 1.9 and Tornado >= 4.0 and
+allowing alphanumeric PKs on all suppoerted frameworks.
+
+
+Features
+--------
+
+* Allowed PKs with dashes and alphanumeric digits. (SHA: e52333b)
+* Reworked test suite so that it uses ``tox`` for simultaneously testing on
+  CPython and PyPy, both 2.x and 3.x (SHA: 2035e21, SHA: 9ca0e8c, SHA: 3915980
+  & SHA: a1d2d96)
+* Reworked ``Resource`` so that it throws a ``NotImplementedError`` instead of
+  returning an ``HttpResponse`` from Django. (SHA: 27859c8)
+* Added several ``HttpError`` subclasses. (SHA: e2aff93)
+* Changed all ``Resource`` subclasses so that a 204 No Content response sends
+  ``text/plain`` on ``Content-Type``. (SHA: 116da9f & SHA: b10be61)
+* Changed ``Resource`` so that it allows any serializable object on the response
+  body. (SHA: 1e3522b & SHA: b70a492)
+
+
+Bugfixes
+--------
+
+* Changed ``JSONSerializer`` to throw a ``BadRequest`` upon a serialization
+  error. (SHA: 8471463)
+* Updated ``DjangoResource`` to use lists instead of the deprecated
+  ``django.conf.urls.patterns`` object. (SHA: f166e4d & SHA: f94c500)
+* Fixed ``FieldsPreparer`` behavior when parsing objects with a custom
+  ``__getattr__``. (SHA: 665ef31)
+* Applied Debian's fix to Tornado tests for version 4.0.0 onwards. (SHA: 372e00a)
+* Skips tests for all unavailable frameworks. (SHA: 8b81b17)
+

@@ -14,6 +14,7 @@ many other Python web frameworks. Based on the lessons learned from Tastypie_
 .. _Itty: https://pypi.python.org/pypi/itty
 .. _Tastypie: http://tastypieapi.org/
 .. _Tornado: http://www.tornadoweb.org/
+.. _tox: https://tox.readthedocs.io/
 
 
 Features
@@ -22,7 +23,7 @@ Features
 * Small, fast codebase
 * JSON output by default, but overridable
 * RESTful
-* Python 3.3+ (with shims to make broke-ass Python 2.6+ work)
+* Python 3.2+ (with shims to make broke-ass Python 2.6+ work)
 * Flexible
 
 
@@ -75,6 +76,7 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
+   releasenotes/v2.0.2
    releasenotes/v2.0.1
    releasenotes/v2.0.0
    releasenotes/v1.4.0
