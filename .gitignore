@@ -3,8 +3,6 @@
 __pycache__
 build
 dist
-env2
-env3
 docs/_build
 tests/.coverage
 tests/cover
@@ -15,3 +13,5 @@ htmlcov
 .cache/
 .eggs/
 .tox/
+*.swp
+.idea/

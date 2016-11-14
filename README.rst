@@ -2,8 +2,8 @@
 restless
 ========
 
-.. image:: https://travis-ci.org/CraveFood/restless.png?branch=master
-        :target: https://travis-ci.org/CraveFood/restless
+.. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
+        :target: https://travis-ci.org/toastdriven/restless
 
 A lightweight REST miniframework for Python.
 
@@ -19,6 +19,7 @@ many other Python web frameworks. Based on the lessons learned from Tastypie_
 .. _Itty: https://pypi.python.org/pypi/itty
 .. _Tastypie: http://tastypieapi.org/
 .. _Tornado: http://www.tornadoweb.org/
+.. _tox: https://tox.readthedocs.io/
 
 
 Features
@@ -27,7 +28,7 @@ Features
 * Small, fast codebase
 * JSON output by default, but overridable
 * RESTful
-* Python 3.3+ (with shims to make broke-ass Python 2.6+ work)
+* Python 3.2+ (with shims to make broke-ass Python 2.6+ work)
 * Flexible
 
 
@@ -148,7 +149,7 @@ BSD
 Running the Tests
 =================
 
-The test suite uses `tox` for simultaneous support of multiple versions of both
+The test suite uses tox_ for simultaneous support of multiple versions of both
 Python and Django. The current versions of Python supported are:
 
 * CPython 2.7
