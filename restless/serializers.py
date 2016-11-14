@@ -1,3 +1,4 @@
+from .exceptions import BadRequest
 from .utils import json, MoreTypesJSONEncoder
 
 
@@ -58,9 +59,12 @@ class JSONSerializer(Serializer):
         :returns: The deserialized data
         :rtype: ``list`` or ``dict``
         """
-        if isinstance(body, bytes):
-            return json.loads(body.decode('utf-8'))
-        return json.loads(body)
+        try:
+            if isinstance(body, bytes):
+                return json.loads(body.decode('utf-8'))
+            return json.loads(body)
+        except ValueError:
+            raise BadRequest('Request body is not valid JSON')
 
     def serialize(self, data):
         """

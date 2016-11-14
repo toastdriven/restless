@@ -3,6 +3,7 @@ from decimal import Decimal
 import unittest
 import uuid
 
+from restless.exceptions import BadRequest
 from restless.serializers import JSONSerializer
 
 
@@ -33,3 +34,7 @@ class JSONSerializerTestCase(unittest.TestCase):
         self.assertEqual(self.serializer.deserialize('{"more": "things"}'), {
             'more': 'things',
         })
+
+    def test_deserialize_invalid(self):
+        with self.assertRaises(BadRequest):
+            self.serializer.deserialize('not valid!')
