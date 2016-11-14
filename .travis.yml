@@ -1,19 +1,16 @@
 language: python
 
 python:
+  - "3.5"
   - "3.4"
-  - "3.3"
   - "2.7"
+  - "pypy"
+  - "pypy3"
 
 # command to install dependencies
 install:
-    - pip install -r test${TRAVIS_PYTHON_VERSION:0:1}_requirements.txt
-    - pip install coveralls
+    - pip install tox-travis
 
 # command to run tests
 script:
-    - py.test --cov=restless
-
-# command to notify coveralls
-after_success:
-    - coveralls
+    - tox

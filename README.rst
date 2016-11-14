@@ -2,10 +2,8 @@
 restless
 ========
 
-.. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
-        :target: https://travis-ci.org/toastdriven/restless
-.. image:: https://coveralls.io/repos/toastdriven/restless/badge.png
-        :target: https://coveralls.io/r/toastdriven/restless
+.. image:: https://travis-ci.org/CraveFood/restless.png?branch=master
+        :target: https://travis-ci.org/CraveFood/restless
 
 A lightweight REST miniframework for Python.
 
@@ -150,24 +148,15 @@ BSD
 Running the Tests
 =================
 
-Getting the tests running looks like:
+The test suite uses `tox` for simultaneous support of multiple versions of both
+Python and Django. The current versions of Python supported are:
 
-.. code:: sh
+* CPython 2.7
+* CPython 3.4
+* CPython 3.5
+* PyPy (Python 2.7)
+* PyPy3 (Python 3.2)
+* PyPy3 beta (Python 3.3)
 
-    $ virtualenv -p python3 env3
-    $ . env3/bin/activate
-    $ pip install -r test3_requirements.txt
-    $ export PYTHONPATH=`pwd`
-    $ py.test -s -v --cov=restless --cov-report=html tests
-
-For Python 2:
-
-.. code:: sh
-
-    $ virtualenv env2
-    $ . env2/bin/activate
-    $ pip install -r test2_requirements.txt
-    $ export PYTHONPATH=`pwd`
-    $ py.test -s -v --cov=restless --cov-report=html tests
-
-Coverage is at about 94%, so please don't make it worse. :D
+You just need to install the Python interpreters above and the `tox` package
+(available via `pip`), then run the `tox` command.

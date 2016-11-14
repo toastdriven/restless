@@ -12,3 +12,6 @@ tests/htmlcov
 .coverage
 htmlcov
 *.egg-info
+.cache/
+.eggs/
+.tox/
