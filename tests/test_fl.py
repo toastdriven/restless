@@ -15,9 +15,9 @@ class FlTestResource(FlaskResource):
     def fake_init(self):
         # Just for testing.
         self.__class__.fake_db = [
-            {"id": 2, "title": 'First post'},
-            {"id": 4, "title": 'Another'},
-            {"id": 5, "title": 'Last'},
+            {"id": 'dead-beef', "title": 'First post'},
+            {"id": 'de-faced', "title": 'Another'},
+            {"id": 'bad-f00d', "title": 'Last'},
         ]
 
     def list(self):
@@ -54,15 +54,15 @@ class FlaskResourceTestCase(unittest.TestCase):
             self.assertEqual(json.loads(resp.data.decode('utf-8')), {
                 'objects': [
                     {
-                        'id': 2,
+                        'id': 'dead-beef',
                         'title': 'First post'
                     },
                     {
-                        'id': 4,
+                        'id': 'de-faced',
                         'title': 'Another'
                     },
                     {
-                        'id': 5,
+                        'id': 'bad-f00d',
                         'title': 'Last'
                     }
                 ]
@@ -73,11 +73,11 @@ class FlaskResourceTestCase(unittest.TestCase):
         flask.request = FakeHttpRequest('GET')
 
         with self.app.test_request_context('/whatever/', method='GET'):
-            resp = detail_endpoint(4)
+            resp = detail_endpoint('de-faced')
             self.assertEqual(resp.headers['Content-Type'], 'application/json')
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(json.loads(resp.data.decode('utf-8')), {
-                'id': 4,
+                'id': 'de-faced',
                 'title': 'Another'
             })
 

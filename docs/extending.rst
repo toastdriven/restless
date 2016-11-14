@@ -92,7 +92,7 @@ Finally, it's just a matter of hooking up the URLs as well. You can do this
 manually or (once again) by extending a built-in method.::
 
     # Add the correct import here.
-    from django.conf.urls import patterns, url
+    from django.conf.urls import url
 
     from restless.dj import DjangoResource
     from restless.resources import skip_prepare
@@ -128,9 +128,9 @@ manually or (once again) by extending a built-in method.::
         @classmethod
         def urls(cls, name_prefix=None):
             urlpatterns = super(PostResource, cls).urls(name_prefix=name_prefix)
-            return urlpatterns + patterns('',
+            return urlpatterns + [
                 url(r'^schema/$', cls.as_view('schema'), name=cls.build_url_name('schema', name_prefix)),
-            )
+            ]
 
 .. note::
 

@@ -15,9 +15,9 @@ class TndBaseTestResource(TornadoResource):
     def __init__(self):
         # Just for testing.
         self.__class__.fake_db = [
-            {"id": 2, "title": 'First post'},
-            {"id": 4, "title": 'Another'},
-            {"id": 5, "title": 'Last'},
+            {"id": "dead-beef", "title": 'First post'},
+            {"id": "de-faced", "title": 'Another'},
+            {"id": "bad-f00d", "title": 'Last'},
         ]
 
 
@@ -30,7 +30,7 @@ class TndBasicTestResource(TndBaseTestResource):
 
     def detail(self, pk):
         for item in self.fake_db:
-            if item['id'] == int(pk):
+            if item['id'] == pk:
                 return item
         return None
 
@@ -49,7 +49,7 @@ class TndAsyncTestResource(TndBaseTestResource):
     @gen.coroutine
     def detail(self, pk):
         for item in self.fake_db:
-            if item['id'] == int(pk):
+            if item['id'] == pk:
                 raise gen.Return(item)
         raise gen.Return(None)
 
@@ -88,15 +88,15 @@ class TndResourceTestCase(BaseHTTPTestCase):
         self.assertEqual(json.loads(resp.body.decode('utf-8')), {
             'objects': [
                 {
-                    'id': 2,
+                    'id': 'dead-beef',
                     'title': 'First post'
                 },
                 {
-                    'id': 4,
+                    'id': 'de-faced',
                     'title': 'Another'
                 },
                 {
-                    'id': 5,
+                    'id': 'bad-f00d',
                     'title': 'Last'
                 }
             ]
@@ -104,14 +104,14 @@ class TndResourceTestCase(BaseHTTPTestCase):
 
     def test_as_detail(self):
         resp = self.fetch(
-            '/fake/4',
+            '/fake/de-faced',
             method='GET',
             follow_redirects=False
         )
         self.assertEqual(resp.headers['Content-Type'], 'application/json; charset=UTF-8')
         self.assertEqual(resp.code, 200)
         self.assertEqual(json.loads(resp.body.decode('utf-8')), {
-            'id': 4,
+            'id': 'de-faced',
             'title': 'Another'
         })
 
@@ -237,15 +237,15 @@ class TndAsyncResourceTestCase(BaseHTTPTestCase):
         self.assertEqual(json.loads(resp.body.decode('utf-8')), {
             'objects': [
                 {
-                    'id': 2,
+                    'id': 'dead-beef',
                     'title': 'First post'
                 },
                 {
-                    'id': 4,
+                    'id': 'de-faced',
                     'title': 'Another'
                 },
                 {
-                    'id': 5,
+                    'id': 'bad-f00d',
                     'title': 'Last'
                 }
             ]
@@ -253,14 +253,14 @@ class TndAsyncResourceTestCase(BaseHTTPTestCase):
 
     def test_as_detail(self):
         resp = self.fetch(
-            '/fake_async/4',
+            '/fake_async/de-faced',
             method='GET',
             follow_redirects=False
         )
         self.assertEqual(resp.headers['Content-Type'], 'application/json; charset=UTF-8')
         self.assertEqual(resp.code, 200)
         self.assertEqual(json.loads(resp.body.decode('utf-8')), {
-            'id': 4,
+            'id': 'de-faced',
             'title': 'Another'
         })
 

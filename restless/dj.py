@@ -1,7 +1,7 @@
 import six
 
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -80,9 +80,9 @@ class DjangoResource(Resource):
             ``api_blogpost_list``
         :type name_prefix: string
 
-        :returns: A ``patterns`` object for ``include(...)``
+        :returns: A list of ``url`` objects for ``include(...)``
         """
-        return patterns('',
+        return [
             url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
-            url(r'^(?P<pk>\d+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
-        )
+            url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
+        ]

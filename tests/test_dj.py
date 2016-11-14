@@ -38,16 +38,20 @@ class DjTestResource(DjangoResource):
         # Just for testing.
         self.__class__.fake_db = [
             FakeModel(
-                id=2,
+                id='dead-beef',
                 title='First post',
                 username='daniel',
                 content='Hello world!'),
             FakeModel(
-                id=4,
+                id='de-faced',
                 title='Another',
                 username='daniel',
                 content='Stuff here.'),
-            FakeModel(id=5, title='Last', username='daniel', content="G'bye!"),
+            FakeModel(
+                id='bad-f00d',
+                title='Last',
+                username='daniel',
+                content="G'bye!"),
         ]
 
     def is_authenticated(self):
@@ -147,19 +151,19 @@ class DjangoResourceTestCase(unittest.TestCase):
                 {
                     'author': 'daniel',
                     'body': 'Hello world!',
-                    'id': 2,
+                    'id': 'dead-beef',
                     'title': 'First post'
                 },
                 {
                     'author': 'daniel',
                     'body': 'Stuff here.',
-                    'id': 4,
+                    'id': 'de-faced',
                     'title': 'Another'
                 },
                 {
                     'author': 'daniel',
                     'body': "G'bye!",
-                    'id': 5,
+                    'id': 'bad-f00d',
                     'title': 'Last'
                 }
             ]
@@ -169,13 +173,13 @@ class DjangoResourceTestCase(unittest.TestCase):
         detail_endpoint = DjTestResource.as_detail()
         req = FakeHttpRequest('GET')
 
-        resp = detail_endpoint(req, 4)
+        resp = detail_endpoint(req, 'de-faced')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'author': 'daniel',
             'body': 'Stuff here.',
-            'id': 4,
+            'id': 'de-faced',
             'title': 'Another'
         })
 

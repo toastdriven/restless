@@ -30,7 +30,7 @@ class IttyResource(Resource):
         :returns: ``None``
         """
         list_url = "%s" % itty.add_slash(rule_prefix)
-        detail_url = "%s" % itty.add_slash(rule_prefix + "/(?P<pk>\d+)")
+        detail_url = "%s" % itty.add_slash(rule_prefix + "/(?P<pk>[\w-]+)")
 
         list_re = re.compile("^%s$" % list_url)
         detail_re = re.compile("^%s$" % detail_url)
