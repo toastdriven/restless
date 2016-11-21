@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
+import restless
+
 
 setup(
     name='restless',
-    version=open('VERSION', 'r').read(),
+    version=restless.VERSION,
     description='A lightweight REST miniframework for Python.',
     author='Daniel Lindsley',
     author_email='daniel@toastdriven.com',
