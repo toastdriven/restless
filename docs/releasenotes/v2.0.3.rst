@@ -1,0 +1,14 @@
+restless v2.0.3
+===============
+
+:date: 2016-11-21
+
+This release adds a change which was in restkiss v2.0.2 but got lost in the
+backporting process - sorry, everybody!
+
+
+Features
+--------
+
+* Changed all ``Resource`` subclasses so that a 204 No Content response sends
+  ``text/plain`` on ``Content-Type``. (SHA: 116da9f & SHA: b10be61)

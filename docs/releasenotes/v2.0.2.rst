@@ -18,8 +18,6 @@ Features
 * Reworked ``Resource`` so that it throws a ``NotImplementedError`` instead of
   returning an ``HttpResponse`` from Django. (SHA: 27859c8)
 * Added several ``HttpError`` subclasses. (SHA: e2aff93)
-* Changed all ``Resource`` subclasses so that a 204 No Content response sends
-  ``text/plain`` on ``Content-Type``. (SHA: 116da9f & SHA: b10be61)
 * Changed ``Resource`` so that it allows any serializable object on the response
   body. (SHA: 1e3522b & SHA: b70a492)
 

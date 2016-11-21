@@ -76,6 +76,7 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
+   releasenotes/v2.0.3
    releasenotes/v2.0.2
    releasenotes/v2.0.1
    releasenotes/v2.0.0
