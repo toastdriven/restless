@@ -18,7 +18,7 @@ do something like::
         def is_authenticated(self):
             return self.request.user.is_authenticated()
 
-If you need a more fine graned authentication you could check your current endpoint and do something like that:
+If you need a more fine graned authentication you could check your current endpoint and do something like that::
 
     class MyResource(DjangoResource):
         def is_authenticated(self):
