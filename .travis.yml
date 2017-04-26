@@ -1,3 +1,5 @@
+sudo: false
+
 language: python
 
 python:
@@ -9,6 +11,7 @@ python:
 
 # command to install dependencies
 install:
+    - pip install six
     - pip install tox-travis
 
 # command to run tests
