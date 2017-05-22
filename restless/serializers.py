@@ -35,7 +35,7 @@ class Serializer(object):
         in the appropriate format.
 
         :param data: The body for the response
-        :type data: string
+        :type data: ``list`` or ``dict``
 
         :returns: A serialized version of the data
         :rtype: string
