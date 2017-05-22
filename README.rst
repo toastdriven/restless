@@ -5,6 +5,10 @@ restless
 .. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
         :target: https://travis-ci.org/toastdriven/restless
 
+.. image:: https://coveralls.io/repos/github/toastdriven/restless/badge.svg?branch=master
+   :target: https://coveralls.io/github/toastdriven/restless?branch=master
+
+
 A lightweight REST miniframework for Python.
 
 Documentation is at http://restless.readthedocs.org/.
