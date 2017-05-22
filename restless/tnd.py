@@ -141,7 +141,7 @@ class TornadoResource(Resource):
         self.ref_rh.finish(data)
 
     def is_debug(self):
-        return self.application.settings['debug']
+        return self.application.settings.get('debug', False)
 
     @gen.coroutine
     def handle(self, endpoint, *args, **kwargs):
