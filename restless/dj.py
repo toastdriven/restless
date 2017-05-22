@@ -36,8 +36,7 @@ class DjangoResource(Resource):
             content_type = 'text/plain'
         else:
             content_type = 'application/json'
-        resp = HttpResponse(data, content_type=content_type)
-        resp.status_code = status
+        resp = HttpResponse(data, content_type=content_type, status=status)
         return resp
 
     def build_error(self, err):

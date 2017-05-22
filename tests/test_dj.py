@@ -2,6 +2,7 @@ import unittest
 
 try:
     from django.http import Http404
+    from django.http.response import REASON_PHRASES
     from django.core.exceptions import ObjectDoesNotExist
 
     # Ugh. Settings for Django.
@@ -222,6 +223,8 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('list')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 501)
+        self.assertEqual(resp.reason_phrase, REASON_PHRASES[501])
+
         resp_json = json.loads(resp.content.decode('utf-8'))
         self.assertEqual(
             resp_json['error'], "Unsupported method 'TRACE' for list endpoint.")
@@ -235,6 +238,8 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('list')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 401)
+        self.assertEqual(resp.reason_phrase, REASON_PHRASES[401])
+
         resp_json = json.loads(resp.content.decode('utf-8'))
         self.assertEqual(resp_json['error'], 'Unauthorized.')
         self.assertTrue('traceback' in resp_json)
@@ -270,6 +275,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('detail')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 500)
+        self.assertEqual(resp.reason_phrase, REASON_PHRASES[500])
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': {
                 'code': 'random-crazy',
@@ -287,6 +293,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('detail', 1001)
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.reason_phrase, REASON_PHRASES[404])
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': 'Model with pk 1001 not found.'
         })
@@ -302,6 +309,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = res.handle('detail', 1001)
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.reason_phrase, REASON_PHRASES[404])
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': 'Model with pk 1001 not found.'
         })
