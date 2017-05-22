@@ -548,7 +548,7 @@ adding the ``is_authenticated`` method.::
         def detail(self, pk):
             return Post.objects.get(id=pk)
 
-        def create(self, data):
+        def create(self):
             return Post.objects.create(
                 title=self.data['title'],
                 user=User.objects.get(username=self.data['author']),
