@@ -1,12 +1,9 @@
+
 import datetime
 import decimal
+import json
 import traceback
 import uuid
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 
 class MoreTypesJSONEncoder(json.JSONEncoder):
