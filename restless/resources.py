@@ -1,4 +1,3 @@
-import six
 import sys
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
