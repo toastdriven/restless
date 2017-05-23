@@ -55,7 +55,10 @@ class FieldsPreparer(Preparer):
             return data
 
         for fieldname, lookup in self.fields.items():
-            result[fieldname] = self.lookup_data(lookup, data)
+            if isinstance(lookup, SubPreparer):
+                result[fieldname] = lookup.prepare(data)
+            else:
+                result[fieldname] = self.lookup_data(lookup, data)
 
         return result
 
@@ -113,3 +116,23 @@ class FieldsPreparer(Preparer):
 
         # There's more to lookup, so dive in recursively.
         return self.lookup_data(remaining_lookup, value)
+
+
+class SubPreparer(FieldsPreparer):
+    def __init__(self, lookup, preparer):
+        self.lookup = lookup
+        self.preparer = preparer
+
+    def get_inner_data(self, data):
+        return self.lookup_data(self.lookup, data)
+
+    def prepare(self, data):
+        return self.preparer.prepare(self.get_inner_data(data))
+
+
+class CollectionSubPreparer(SubPreparer):
+    def prepare(self, data):
+        result = []
+        for item in self.get_inner_data(data):
+            result.append(self.preparer.prepare(item))
+        return result
