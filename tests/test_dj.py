@@ -228,7 +228,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('list')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 501)
-        self.assertEqual(resp.reason_phrase, responses[501])
+        self.assertEqual(resp.reason_phrase.title(), responses[501])
 
         resp_json = json.loads(resp.content.decode('utf-8'))
         self.assertEqual(
@@ -243,7 +243,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('list')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 401)
-        self.assertEqual(resp.reason_phrase, responses[401])
+        self.assertEqual(resp.reason_phrase.title(), responses[401])
 
         resp_json = json.loads(resp.content.decode('utf-8'))
         self.assertEqual(resp_json['error'], 'Unauthorized.')
@@ -280,7 +280,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('detail')
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 500)
-        self.assertEqual(resp.reason_phrase, responses[500])
+        self.assertEqual(resp.reason_phrase.title(), responses[500])
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': {
                 'code': 'random-crazy',
@@ -298,7 +298,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = self.res.handle('detail', 1001)
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 404)
-        self.assertEqual(resp.reason_phrase, responses[404])
+        self.assertEqual(resp.reason_phrase.title(), responses[404])
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': 'Model with pk 1001 not found.'
         })
@@ -314,7 +314,7 @@ class DjangoResourceTestCase(unittest.TestCase):
         resp = res.handle('detail', 1001)
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 404)
-        self.assertEqual(resp.reason_phrase, responses[404])
+        self.assertEqual(resp.reason_phrase.title(), responses[404])
         self.assertEqual(json.loads(resp.content.decode('utf-8')), {
             'error': 'Model with pk 1001 not found.'
         })
