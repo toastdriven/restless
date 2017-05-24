@@ -9,6 +9,9 @@ class InstaObj(object):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+    def dont(self):
+        return {'panic': 'vogon'}
+
 
 class LookupDataTestCase(unittest.TestCase):
     def setUp(self):
@@ -41,6 +44,9 @@ class LookupDataTestCase(unittest.TestCase):
                 {'name': 'Arthur'},
                 {'name': 'Beeblebrox'},
             ],
+            'dont': lambda: {
+                'panic': 'vogon',
+            },
         }
 
     def test_dict_simple(self):
@@ -80,6 +86,18 @@ class LookupDataTestCase(unittest.TestCase):
     def test_complex_miss(self):
         with self.assertRaises(AttributeError):
             self.preparer.lookup_data('more.nested.nope', self.dict_data)
+
+    def test_obj_callable(self):
+        self.assertEqual(
+            self.preparer.lookup_data('dont.panic', self.obj_data),
+            'vogon',
+        )
+
+    def test_dict_callable(self):
+        self.assertEqual(
+            self.preparer.lookup_data('dont.panic', self.dict_data),
+            'vogon',
+        )
 
     def test_prepare_simple(self):
         preparer = FieldsPreparer(fields={
