@@ -109,13 +109,10 @@ class FieldsPreparer(Preparer):
             value = data[part]
         elif data is not None:
             # Assume it's an object.
-            if hasattr(value, '__call__'):
-                value = getattr(data, part)()
-            else:
-                value = getattr(data, part)
-                if hasattr(value, '__call__') and not hasattr(value, 'db_manager'):
-                    value = getattr(data, part)()
+            value = getattr(data, part)
 
+        if callable(value):
+            value = value()
 
         if not remaining_lookup:
             return value
