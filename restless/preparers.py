@@ -111,7 +111,9 @@ class FieldsPreparer(Preparer):
             # Assume it's an object.
             value = getattr(data, part)
 
-        if callable(value):
+        # Call if it's callable except if it's a Django DB manager instance
+        #   We check if is a manager by checking the db_manager (duck typing)
+        if callable(value) and not hasattr(value, 'db_manager'):
             value = value()
 
         if not remaining_lookup:
