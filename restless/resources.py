@@ -80,6 +80,8 @@ class Resource(object):
         self.request = None
         self.data = None
         self.endpoint = None
+        self.args = []
+        self.kwargs = {}
         self.status = 200
 
     @classmethod
@@ -140,7 +142,9 @@ class Resource(object):
             # instances.
             inst = cls(*init_args, **init_kwargs)
             inst.request = request
-            return inst.handle(view_type, *args, **kwargs)
+            inst.args = args
+            inst.kwargs = kwargs
+            return inst.handle(view_type)
 
         return _wrapper
 
@@ -284,7 +288,7 @@ class Resource(object):
 
             self.data = self.deserialize(method, endpoint, self.request_body())
             view_method = getattr(self, self.http_methods[endpoint][method])
-            data = view_method(*args, **kwargs)
+            data = view_method(*self.args, **self.kwargs)
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
             return self.handle_error(err)
