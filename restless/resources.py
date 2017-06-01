@@ -1,6 +1,7 @@
 from functools import wraps
 import six
 import sys
+from functools import wraps
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .data import Data
