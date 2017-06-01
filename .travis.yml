@@ -24,6 +24,18 @@ matrix:
     - python: "3.3"
       env: DJANGO="1.11"
 
+env:
+  - DJANGO=1.8
+  - DJANGO=1.9
+  - DJANGO=1.10
+  
+matrix:
+  exclude:
+    - python: "3.3"
+      env: DJANGO=1.9
+    - python: "3.3"
+      env: DJANGO=1.10
+
 # command to install dependencies
 install:
     - pip install six tox-travis
