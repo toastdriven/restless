@@ -1,7 +1,8 @@
 import six
 
+from django import VERSION as DJANGO_VERSION
 from django.conf import settings
-from django.conf.urls import url
+from django.conf.urls import url, patterns
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -9,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .constants import OK, NO_CONTENT
 from .exceptions import NotFound
 from .resources import Resource
+from .constants import RECENT_DJANGO_VERSION
 
 
 class DjangoResource(Resource):
@@ -20,12 +22,12 @@ class DjangoResource(Resource):
     """
     # Because Django.
     @classmethod
-    def as_list(self, *args, **kwargs):
-        return csrf_exempt(super(DjangoResource, self).as_list(*args, **kwargs))
+    def as_list(cls, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_list(*args, **kwargs))
 
     @classmethod
-    def as_detail(self, *args, **kwargs):
-        return csrf_exempt(super(DjangoResource, self).as_detail(*args, **kwargs))
+    def as_detail(cls, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_detail(*args, **kwargs))
 
     def is_debug(self):
         return settings.DEBUG
@@ -85,9 +87,14 @@ class DjangoResource(Resource):
             ``api_blogpost_list``
         :type name_prefix: string
 
-        :returns: A list of ``url`` objects for ``include(...)``
+        :returns: A ``patterns`` or a ``list` object for ``include(...)``
         """
-        return [
+        urls = [
             url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
-            url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
+            url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix))
         ]
+
+        if DJANGO_VERSION >= RECENT_DJANGO_VERSION:
+            return urls
+        else:
+            return patterns('', urls[0], urls[1])
