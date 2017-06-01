@@ -146,9 +146,10 @@ in your browser & get a JSON schema view!
 Customizing Data Output
 =======================
 
-There are three approaches to customizing your data ouput.
+There are four approaches to customizing your data ouput.
 
 #. The built-in ``Preparer/FieldsPreparer`` (simple)
+#. The included ``SubPreparer/CollectionSubPreparer`` (slightly more complex)
 #. Overriding :py:meth:`restless.resources.Resource.prepare` (happy medium)
 #. Per-method data (flexible but most work)
 
@@ -181,6 +182,89 @@ attribute access is used. In either case, the found value is returned.
 If the lookup path **has** periods (i.e. ``entry.title``), it is split on the
 periods (like a Python import path) and recursively uses the previous value to
 look up the next value until a final value is found.
+
+
+Subpreparers & Collections
+--------------------------
+
+Sometimes, your data isn't completely flat but is instead nested. This
+frequently occurs in conjunction with related data, such as a foreign key'd
+object or many-to-many scenario. In this case, you can lever "subpreparers".
+Restless ships with two of these, the ``SubPreparer`` & the
+``CollectionSubPreparer``.
+
+The ``SubPreparer`` is useful for a single nested relation. You define a
+regular ``Preparer/FieldsPreparer`` (perhaps in a shareable location), then
+use the ``SubPreparer`` to pull it in & incorporate the nested data. For
+example::
+
+    # We commonly expose author information in our API as nested data.
+    # This definition can happen in its own module or wherever needed.
+    author_preparer = FieldsPreparer(fields={
+        'id': 'pk',
+        'username': 'username',
+        'name': 'get_full_name',
+    })
+
+    # ...
+
+    # Then, in the main preparer, pull them in using `SubPreparer`.
+    preparer = FieldsPreparer(fields={
+        'author': SubPreparer('user', author_preparer),
+        # Other fields can come before/follow as normal.
+        'content': 'post',
+        'created': 'created_at',
+    })
+
+This results in output like::
+
+    {
+        "content": "Isn't my blog cool? I think so...",
+        "created": "2017-05-22T10:34:48",
+        "author": {
+            "id": 5,
+            "username": "joe",
+            "name": "Joe Bob"
+        }
+    }
+
+The ``CollectionSubPreparer`` operates on the same principle (define a set
+of fields to be nested), but works with collections of things. These collections
+should be ordered & behave similar to iterables like ``list``s & ``tuples``.
+As an example::
+
+    # Set up a preparer that handles the data for each thing in the broader
+    # collection.
+    # Again, this can be in its own module or just wherever it's needed.
+    comment_preparer = FieldsPreparer(fields={
+        'comment': 'comment_text',
+        'created': 'created',
+    })
+
+    # Use it with the ``CollectionSubPreparer`` to create a list
+    # of prepared sub items.
+    preparer = FieldsPreparer(fields={
+        # A normal blog post field.
+        'post': 'post_text',
+        # All the comments on the post.
+        'comments': CollectionSubPreparer('comments.all', comment_preparer),
+    })
+
+Which would produce output like::
+
+    {
+        "post": "Another day, another blog post.",
+        "comments": [
+            {
+                "comment": "I hear you. Boring day here too.",
+                "created": "2017-05-23T16:43:22"
+            },
+            {
+                "comment": "SPAM SPAM SPAM",
+                "created": "2017-05-24T21:21:21"
+            }
+        ]
+    }
 
 
 Overriding ``prepare``
