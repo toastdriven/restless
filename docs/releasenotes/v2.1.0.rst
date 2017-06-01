@@ -1,0 +1,19 @@
+restless v2.1.0
+===============
+
+:date: 2017-06-01
+
+
+Features
+--------
+
+* Added ``SubPreparer`` and ``CollectionSubPreparer`` classes to make easier to nest responses
+* Hability of using callables in preparers (as soon as they don't have args)
+
+Changes
+-------
+
+* Dropped Itty support :(
+* Proper HTTP status messages
+* Added support to Django 1.9 to 1.11 (dropped support to Django <= 1.7)
+* Proper wrapping for decorators
