@@ -1,3 +1,5 @@
+import six
+
 from pyramid.response import Response
 
 from .constants import OK, NO_CONTENT
@@ -34,7 +36,12 @@ class PyramidResource(Resource):
             content_type = 'text/plain'
         else:
             content_type = 'application/json'
-        resp = Response(data, status_code=status, content_type=content_type)
+
+        if six.PY3:
+            resp = Response(text=data, status_code=status, content_type=content_type)
+        else:
+            resp = Response(data, status_code=status, content_type=content_type)
+
         return resp
 
     @classmethod
