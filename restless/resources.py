@@ -1,4 +1,5 @@
 from functools import wraps
+import logging
 import sys
 
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
@@ -7,6 +8,9 @@ from .exceptions import MethodNotImplemented, Unauthorized
 from .preparers import Preparer
 from .serializers import JSONSerializer
 from .utils import format_traceback
+
+
+logger = logging.getLogger(__name__)
 
 
 def skip_prepare(func):
@@ -267,14 +271,15 @@ class Resource(object):
         self.endpoint = endpoint
         method = self.request_method()
 
+        logger.debug('Handling method {method} for {endpoint}'.format(method=method, endpoint=self.endpoint))
+
         try:
             # Use ``.get()`` so we can also dodge potentially incorrect
             # ``endpoint`` errors as well.
-            if not method in self.http_methods.get(endpoint, {}):
+            if method not in self.http_methods.get(endpoint, {}):
                 raise MethodNotImplemented(
-                    "Unsupported method '{0}' for {1} endpoint.".format(
-                        method,
-                        endpoint
+                    "Unsupported method '{method}' for {endpoint} endpoint".format(
+                        method=method, endpoint=self.endpoint
                     )
                 )
 
@@ -286,9 +291,17 @@ class Resource(object):
             data = view_method(*args, **kwargs)
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
+            logger.exception('Error encountered when handling method {method} for {endpoint}'.format(
+                method=method, endpoint=self.endpoint
+            ))
             return self.handle_error(err)
 
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
+
+        logger.debug('Handled method {method} for {endpoint} with {status_code} code'.format(
+            method=method, endpoint=self.endpoint, status_code=status
+        ))
+
         return self.build_response(serialized, status=status)
 
     def handle_error(self, err):

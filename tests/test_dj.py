@@ -232,7 +232,7 @@ class DjangoResourceTestCase(unittest.TestCase):
 
         resp_json = json.loads(resp.content.decode('utf-8'))
         self.assertEqual(
-            resp_json['error'], "Unsupported method 'TRACE' for list endpoint.")
+            resp_json['error'], "Unsupported method 'TRACE' for list endpoint")
         self.assertTrue('traceback' in resp_json)
 
     def test_handle_not_authenticated(self):
