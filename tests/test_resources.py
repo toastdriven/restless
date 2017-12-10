@@ -311,33 +311,49 @@ class ResourceTestCase(unittest.TestCase):
             self.res.delete_list()
 
     def test_endpoint_list(self):
-        self.res.handle('list')
-        self.assertEqual(self.res.endpoint, 'list')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('list')
+            self.assertEqual(self.res.endpoint, 'list')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for list')
 
     def test_endpoint_detail(self):
-        self.res.handle('detail')
-        self.assertEqual(self.res.endpoint, 'detail')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('detail')
+            self.assertEqual(self.res.endpoint, 'detail')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for detail')
 
     def test_endpoint_create(self):
-        self.res.handle('create')
-        self.assertEqual(self.res.endpoint, 'create')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('create')
+            self.assertEqual(self.res.endpoint, 'create')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for create')
 
     def test_endpoint_update(self):
-        self.res.handle('update')
-        self.assertEqual(self.res.endpoint, 'update')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('update')
+            self.assertEqual(self.res.endpoint, 'update')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for update')
 
     def test_endpoint_delete(self):
-        self.res.handle('delete')
-        self.assertEqual(self.res.endpoint, 'delete')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('delete')
+            self.assertEqual(self.res.endpoint, 'delete')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for delete')
 
     def test_endpoint_update_list(self):
-        self.res.handle('update_list')
-        self.assertEqual(self.res.endpoint, 'update_list')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('update_list')
+            self.assertEqual(self.res.endpoint, 'update_list')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for update_list')
 
     def test_endpoint_create_detail(self):
-        self.res.handle('create_detail')
-        self.assertEqual(self.res.endpoint, 'create_detail')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('create_detail')
+            self.assertEqual(self.res.endpoint, 'create_detail')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for create_detail')
 
     def test_endpoint_delete_list(self):
-        self.res.handle('delete_list')
-        self.assertEqual(self.res.endpoint, 'delete_list')
+        with self.assertLogs('restless.resources', level='DEBUG') as logged:
+            self.res.handle('delete_list')
+            self.assertEqual(self.res.endpoint, 'delete_list')
+            self.assertEqual(logged.output[0], 'DEBUG:restless.resources:Handling method GET for delete_list')
