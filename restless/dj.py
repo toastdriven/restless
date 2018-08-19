@@ -58,7 +58,7 @@ class DjangoResource(Resource):
         :param name_prefix: (Optional) A prefix for the URL's name (for
             resolving). The default is ``None``, which will autocreate a prefix
             based on the class name. Ex: ``BlogPostResource`` ->
-            ``api_blog_post_list``
+            ``api_blogpost_list``
         :type name_prefix: string
 
         :returns: The final name
