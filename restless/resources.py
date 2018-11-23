@@ -172,7 +172,7 @@ class Resource(object):
         # By default, Django-esque.
         return self.request.body
 
-    def request_params(self):
+    def request_parameters(self):
         """
         Returns the current request URL parameters.
 
@@ -297,7 +297,7 @@ class Resource(object):
             if not self.is_authenticated():
                 raise Unauthorized()
 
-            self.params = self.request_params()
+            self.params = self.request_parameters()
             self.data = self.deserialize(method, endpoint, self.request_body())
             view_method = getattr(self, self.http_methods[endpoint][method])
             data = view_method(*args, **kwargs)
