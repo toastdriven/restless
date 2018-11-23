@@ -41,6 +41,9 @@ class FlaskResource(Resource):
     def request_body(self):
         return self.request.data
 
+    def request_parameters(self):
+        return self.request.args
+
     def is_debug(self):
         from flask import current_app
         return current_app.debug
