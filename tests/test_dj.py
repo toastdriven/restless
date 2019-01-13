@@ -238,7 +238,7 @@ class DjangoResourceTestCase(unittest.TestCase):
                  },
                  )
 
-    def test_as_list_paginated_second_age(self):
+    def test_as_list_paginated_second_page(self):
         list_endpoint = DjTestResourcePaginatedOnePerPage(page_size=1).as_list()
 
         req = FakeHttpRequest('GET', get_request={'p': 2})
