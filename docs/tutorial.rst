@@ -171,6 +171,10 @@ We'll start with the most basic functional example.::
 
 
     class PostResource(DjangoResource):
+
+        paginate = True
+        page_size = 20
+
         preparer = FieldsPreparer(fields={
             'id': 'id',
             'title': 'title',
@@ -193,6 +197,11 @@ is kinda important.
 
 The name of the class isn't particularly important, but it should be
 descriptive (and can play a role in hooking up URLs later on).
+
+The ``paginate`` defines if the results should be paginated or not.
+You can configure how many results per page setting ``page_size`` in
+your resource, or using the configuring ``RESTLESS_PAGE_SIZE`` in your settings.
+By default, is 10 objects per page.
 
 Fields
 ------
