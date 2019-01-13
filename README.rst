@@ -158,6 +158,10 @@ The test suite uses tox_ for simultaneous support of multiple versions of both
 Python and Django. The current versions of Python supported are:
 
 * CPython 2.7
+<<<<<<< HEAD
+=======
+* CPython 3.4
+>>>>>>> Remove Python 3.3
 * CPython 3.5
 * CPython 3.6
 * CPython 3.7
