@@ -16,3 +16,4 @@ htmlcov
 *.swp
 .idea/
 *.whl
+.python-version
