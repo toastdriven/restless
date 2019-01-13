@@ -139,6 +139,14 @@ class DjTestResource(DjangoResource):
         }
 
 
+class DjTestResourcePaginated(DjTestResource):
+    paginate = True
+
+
+class DjTestResourcePaginatedOnePerPage(DjTestResourcePaginated):
+    page_size = 1
+
+
 class DjTestResourceHttp404Handling(DjTestResource):
     def detail(self, pk):
         for item in self.fake_db:
@@ -186,6 +194,90 @@ class DjangoResourceTestCase(unittest.TestCase):
                 }
             ]
         })
+
+    def test_as_list_paginated(self):
+        list_endpoint = DjTestResourcePaginated().as_list()
+        req = FakeHttpRequest('GET')
+
+        resp = list_endpoint(req)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            json.loads(resp.content.decode('utf-8')),
+            {
+                'objects': [
+                    {
+                        'author': 'daniel',
+                        'body': 'Hello world!',
+                        'id': 'dead-beef',
+                        'title': 'First post',
+                    },
+                    {
+                        'author': 'daniel',
+                        'body': 'Stuff here.',
+                        'id': 'de-faced',
+                        'title': 'Another',
+                    },
+                    {
+                        'author': 'daniel',
+                        'body': "G'bye!",
+                        'id': 'bad-f00d',
+                        'title': 'Last',
+                    },
+                ],
+                'pagination': {
+                    'num_pages': 1,
+                    'count': 3,
+                    'page': 1,
+                    'start_index': 1,
+                    'end_index': 3,
+                    'next_page': None,
+                    'previous_page': None,
+                    'per_page': 10,
+                    },
+                 },
+                 )
+
+    def test_as_list_paginated_second_age(self):
+        list_endpoint = DjTestResourcePaginatedOnePerPage(page_size=1).as_list()
+
+        req = FakeHttpRequest('GET', get_request={'p': 2})
+
+        resp = list_endpoint(req)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 200)
+
+        self.assertEqual(
+            json.loads(resp.content.decode('utf-8')),
+            {
+                'objects': [
+                    {
+                        'author': 'daniel',
+                        'body': 'Stuff here.',
+                        'id': 'de-faced',
+                        'title': 'Another',
+                    },
+                ],
+                'pagination': {
+                    'num_pages': 3,
+                    'count': 3,
+                    'page': 2,
+                    'start_index': 2,
+                    'end_index': 2,
+                    'next_page': 3,
+                    'previous_page': 1,
+                    'per_page': 1,
+                    },
+                 },
+                 )
+
+    def test_as_list_paginated_invalid_page(self):
+        list_endpoint = DjTestResourcePaginated().as_list()
+        req = FakeHttpRequest('GET', get_request={'p': 2})
+
+        resp = list_endpoint(req)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 400)
 
     def test_as_detail(self):
         detail_endpoint = DjTestResource.as_detail()
