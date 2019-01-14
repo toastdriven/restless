@@ -252,6 +252,50 @@ class ResourceTestCase(unittest.TestCase):
             'title': 'Cosmos'
         })
 
+    def test_prepare_detail(self):
+        data = {
+            'title': 'Cosmos',
+            'author': 'Carl Sagan',
+            'short_desc': 'A journey through the stars by an emminent astrophysist.',
+            'pub_date': '1980',
+            'index': '7',
+        }
+        self.res.handle('detail')
+
+        self.res.detail_preparer = FieldsPreparer(fields={
+            'title': 'title',
+            'author': 'author',
+            'synopsis': 'short_desc',
+            'date_published': 'pub_date',
+        })
+        self.assertEqual(self.res.prepare(data), {
+            'author': 'Carl Sagan',
+            'synopsis': 'A journey through the stars by an emminent astrophysist.',
+            'title': 'Cosmos',
+            'date_published': '1980',
+        })
+
+    def test_prepare_list(self):
+        data = {
+            'title': 'Cosmos',
+            'author': 'Carl Sagan',
+            'short_desc': 'A journey through the stars by an emminent astrophysist.',
+            'pub_date': '1980',
+            'index': '7',
+        }
+        self.res.handle('list')
+
+        self.res.list_preparer = FieldsPreparer(fields={
+            'title': 'title',
+            'author': 'author',
+            'index': 'index',
+        })
+        self.assertEqual(self.res.prepare(data), {
+            'title': 'Cosmos',
+            'author': 'Carl Sagan',
+            'index': '7',
+        })
+
     def test_wrap_list_response(self):
         data = ['one', 'three', 'two']
         self.assertEqual(self.res.wrap_list_response(data), {
