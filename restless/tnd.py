@@ -126,7 +126,7 @@ class TornadoResource(Resource):
         return self.request.method
 
     def request_body(self):
-        return self.request.body 
+        return self.request.body
 
     def build_response(self, data, status=OK):
         if status == NO_CONTENT:
@@ -150,9 +150,10 @@ class TornadoResource(Resource):
         the way we handle the return value of view_method.
         """
         method = self.request_method()
+        self.endpoint = endpoint
 
         try:
-            if not method in self.http_methods.get(endpoint, {}):
+            if method not in self.http_methods.get(endpoint, {}):
                 raise MethodNotImplemented(
                     "Unsupported method '{}' for {} endpoint.".format(
                         method,
@@ -175,5 +176,3 @@ class TornadoResource(Resource):
 
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
         raise gen.Return(self.build_response(serialized, status=status))
-
-
