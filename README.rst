@@ -11,18 +11,18 @@ restless
 
 A lightweight REST miniframework for Python.
 
-Documentation is at http://restless.readthedocs.org/.
+Documentation is at https://restless.readthedocs.io/.
 
 Works great with Django_, Flask_, Pyramid_, Tornado_ & Itty_, but should be useful for
 many other Python web frameworks. Based on the lessons learned from Tastypie_
 & other REST libraries.
 
-.. _Django: http://djangoproject.com/
+.. _Django: https://www.djangoproject.com/
 .. _Flask: http://flask.pocoo.org/
-.. _Pyramid: http://www.pylonsproject.org/
-.. _Itty: https://pypi.python.org/pypi/itty
+.. _Pyramid: https://pylonsproject.org/
+.. _Itty: https://pypi.org/project/itty/
 .. _Tastypie: http://tastypieapi.org/
-.. _Tornado: http://www.tornadoweb.org/
+.. _Tornado: https://www.tornadoweb.org/
 .. _tox: https://tox.readthedocs.io/
 
 

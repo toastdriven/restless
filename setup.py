@@ -11,7 +11,7 @@ setup(
     description='A lightweight REST miniframework for Python.',
     author='Daniel Lindsley',
     author_email='daniel@toastdriven.com',
-    url='http://github.com/toastdriven/restless/',
+    url='https://github.com/toastdriven/restless/',
     long_description=open('README.rst', 'r').read(),
     packages=[
         'restless',
