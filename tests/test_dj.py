@@ -80,7 +80,7 @@ class DjTestResource(DjangoResource):
                 return item
 
         # If it wasn't found in our fake DB, raise a Django-esque exception.
-        raise ObjectDoesNotExist("Model with pk {0} not found.".format(pk))
+        raise ObjectDoesNotExist("Model with pk {} not found.".format(pk))
 
     def create(self):
         self.fake_db.append(FakeModel(
@@ -154,7 +154,7 @@ class DjTestResourceHttp404Handling(DjTestResource):
                 return item
 
         # If it wasn't found in our fake DB, raise a Django-esque exception.
-        raise Http404("Model with pk {0} not found.".format(pk))
+        raise Http404("Model with pk {} not found.".format(pk))
 
 
 @unittest.skipIf(not settings, "Django is not available")
