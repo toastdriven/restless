@@ -213,10 +213,10 @@ class InternalTestCase(BaseTestCase):
         ori_debug = app.settings['debug']
 
         app.settings['debug'] = False
-        self.assertEqual(self.new_handler.resource_handler.is_debug(), False)
+        self.assertFalse(self.new_handler.resource_handler.is_debug())
 
         app.settings['debug'] = True
-        self.assertEqual(self.new_handler.resource_handler.is_debug(), True)
+        self.assertTrue(self.new_handler.resource_handler.is_debug())
 
         app.settings['debug'] = ori_debug
 
@@ -229,8 +229,8 @@ class InternalTestCase(BaseTestCase):
     def test_class(self):
         """ test the generated tornado.web.RequestHandler """
         self.assertEqual(self.new_handler.__class__.__name__, 'TndBasicTestResource__BridgeMixin_restless')
-        self.assertTrue(_BridgeMixin in self.new_handler.__class__.__mro__)
-        self.assertTrue(web.RequestHandler in self.new_handler.__class__.__mro__)
+        self.assertIn(_BridgeMixin, self.new_handler.__class__.__mro__)
+        self.assertIn(web.RequestHandler, self.new_handler.__class__.__mro__)
 
     def test_var(self):
         """ make sure variable from tornado is correctly passed. """

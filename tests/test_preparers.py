@@ -74,10 +74,10 @@ class LookupDataTestCase(unittest.TestCase):
             self.preparer.lookup_data('whee', self.obj_data)
 
     def test_dict_nullable_fk(self):
-        self.assertEqual(self.preparer.lookup_data('parent.id', self.dict_data), None)
+        self.assertIsNone(self.preparer.lookup_data('parent.id', self.dict_data))
 
     def test_obj_nullable_fk(self):
-        self.assertEqual(self.preparer.lookup_data('parent.id', self.obj_data), None)
+        self.assertIsNone(self.preparer.lookup_data('parent.id', self.obj_data))
 
     def test_empty_lookup(self):
         # We could possibly get here in the recursion.

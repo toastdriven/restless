@@ -14,5 +14,5 @@ class FormatTracebackTestCase(unittest.TestCase):
             self.assertTrue(result.startswith('Traceback (most recent call last):\n'))
             self.assertFalse(result.endswith('\n'))
             lines = result.split('\n')
-            self.assertTrue(len(lines) > 3)
+            self.assertGreater(len(lines), 3)
             self.assertEqual(lines[-1], 'ValueError: Because we need an exception.')
