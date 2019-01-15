@@ -22,7 +22,7 @@ Features
 * Small, fast codebase
 * JSON output by default, but overridable
 * RESTful
-* Python 3.2+ (with shims to make broke-ass Python 2.6+ work)
+* Python 3.4+ (with shims to make broke-ass Python 2.6+ work)
 * Flexible
 
 
@@ -92,4 +92,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

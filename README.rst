@@ -32,7 +32,7 @@ Features
 * Small, fast codebase
 * JSON output by default, but overridable
 * RESTful
-* Python 3.2+ (with shims to make broke-ass Python 2.6+ work)
+* Python 3.4+ (with shims to make broke-ass Python 2.6+ work)
 * Django 1.8+
 * Flexible
 
@@ -158,7 +158,6 @@ The test suite uses tox_ for simultaneous support of multiple versions of both
 Python and Django. The current versions of Python supported are:
 
 * CPython 2.7
-* CPython 3.3
 * CPython 3.4
 * CPython 3.5
 * CPython 3.6
