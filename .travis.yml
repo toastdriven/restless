@@ -2,11 +2,14 @@ sudo: false
 
 language: python
 
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "pypy" # cPython 2.7
+matrix:
+  include:
+    - python: "2.7"
+    - python: "3.5"
+    - python: "3.6"
+    - python: "3.7"
+      dist: xenial
+    - python: "pypy" # CPython 2.7
 
 env:
   - DJANGO="1.8"
