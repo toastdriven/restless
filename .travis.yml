@@ -6,7 +6,7 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
-  - "pypy" # CPython 2.7
+  - "pypy2.7-6.0" # CPython 2.7
 
 env:
   - DJANGO="1.8"
