@@ -25,10 +25,10 @@ class JSONSerializerTestCase(unittest.TestCase):
 
     def test_serialize(self):
         body = self.serializer.serialize(self.dict_data)
-        self.assertTrue('"hello": "world"' in body)
-        self.assertTrue('"abc": 123' in body)
-        self.assertTrue('"nested": "2014-03-30T12:55:15"' in body)
-        self.assertTrue('"again": "18.9"' in body)
+        self.assertIn('"hello": "world"', body)
+        self.assertIn('"abc": 123', body)
+        self.assertIn('"nested": "2014-03-30T12:55:15"', body)
+        self.assertIn('"again": "18.9"', body)
 
     def test_deserialize(self):
         self.assertEqual(self.serializer.deserialize('{"more": "things"}'), {

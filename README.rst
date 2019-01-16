@@ -2,8 +2,8 @@
 restless
 ========
 
-.. image:: https://travis-ci.org/toastdriven/restless.png?branch=master
-        :target: https://travis-ci.org/toastdriven/restless
+.. image:: https://travis-ci.org/toastdriven/restless.svg?branch=master
+    :target: https://travis-ci.org/toastdriven/restless
 
 .. image:: https://coveralls.io/repos/github/toastdriven/restless/badge.svg?branch=master
    :target: https://coveralls.io/github/toastdriven/restless?branch=master
@@ -11,18 +11,18 @@ restless
 
 A lightweight REST miniframework for Python.
 
-Documentation is at http://restless.readthedocs.org/.
+Documentation is at https://restless.readthedocs.io/.
 
 Works great with Django_, Flask_, Pyramid_, Tornado_ & Itty_, but should be useful for
 many other Python web frameworks. Based on the lessons learned from Tastypie_
 & other REST libraries.
 
-.. _Django: http://djangoproject.com/
+.. _Django: https://www.djangoproject.com/
 .. _Flask: http://flask.pocoo.org/
-.. _Pyramid: http://www.pylonsproject.org/
-.. _Itty: https://pypi.python.org/pypi/itty
+.. _Pyramid: https://pylonsproject.org/
+.. _Itty: https://pypi.org/project/itty/
 .. _Tastypie: http://tastypieapi.org/
-.. _Tornado: http://www.tornadoweb.org/
+.. _Tornado: https://www.tornadoweb.org/
 .. _tox: https://tox.readthedocs.io/
 
 
@@ -32,7 +32,7 @@ Features
 * Small, fast codebase
 * JSON output by default, but overridable
 * RESTful
-* Python 3.4+ (with shims to make broke-ass Python 2.6+ work)
+* Python 3.5+ (with shims to make broke-ass Python 2.7 work)
 * Django 1.8+
 * Flexible
 
@@ -158,9 +158,9 @@ The test suite uses tox_ for simultaneous support of multiple versions of both
 Python and Django. The current versions of Python supported are:
 
 * CPython 2.7
-* CPython 3.4
 * CPython 3.5
 * CPython 3.6
+* CPython 3.7
 * PyPy (Python 2.7)
 
 You just need to install the Python interpreters above and the `tox` package

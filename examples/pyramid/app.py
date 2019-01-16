@@ -14,7 +14,7 @@ class UserResource(PyramidResource):
         return True
 
     def make_user_key(self, username):
-        return 'user_{0}'.format(username)
+        return 'user_{}'.format(username)
 
     def list(self):
         usernames = self.conn.lrange('users', 0, 100)

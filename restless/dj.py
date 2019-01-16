@@ -105,7 +105,7 @@ class DjangoResource(Resource):
         :rtype: string
         """
         if name_prefix is None:
-            name_prefix = 'api_{0}'.format(
+            name_prefix = 'api_{}'.format(
                 cls.__name__.replace('Resource', '').lower()
             )
 

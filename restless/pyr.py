@@ -56,7 +56,7 @@ class PyramidResource(Resource):
         :rtype: string
         """
         if routename_prefix is None:
-            routename_prefix = 'api_{0}'.format(
+            routename_prefix = 'api_{}'.format(
                 cls.__name__.replace('Resource', '').lower()
             )
 

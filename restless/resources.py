@@ -272,7 +272,7 @@ class Resource(object):
             # ``endpoint`` errors as well.
             if not method in self.http_methods.get(endpoint, {}):
                 raise MethodNotImplemented(
-                    "Unsupported method '{0}' for {1} endpoint.".format(
+                    "Unsupported method '{}' for {} endpoint.".format(
                         method,
                         endpoint
                     )

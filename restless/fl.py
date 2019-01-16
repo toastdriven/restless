@@ -74,7 +74,7 @@ class FlaskResource(Resource):
         :rtype: string
         """
         if endpoint_prefix is None:
-            endpoint_prefix = 'api_{0}'.format(
+            endpoint_prefix = 'api_{}'.format(
                 cls.__name__.replace('Resource', '').lower()
             )
 
