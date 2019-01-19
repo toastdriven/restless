@@ -446,20 +446,6 @@ class Resource(object):
         """
         return self.list_preparer.prepare(data)
 
-    def prepare_detail(self, data):
-        """
-        Given an item (``object`` or ``dict``), this will potentially go through
-        & reshape the output based on ``self.prepare_with`` object.
-        Special method to be used when prepating detail-style endpoints.
-
-        :param data: An item to prepare for serialization
-        :type data: object or dict
-
-        :returns: A potentially reshaped dict
-        :rtype: dict
-        """
-        return self.detail_preparer.prepare(data)
-
     def prepare(self, data):
         """
         Given an item (``object`` or ``dict``), this will potentially go through
@@ -474,8 +460,6 @@ class Resource(object):
 
         if self.endpoint == 'list' and hasattr(self, 'list_preparer'):
             return self.prepare_list(data)
-        elif self.endpoint == 'detail' and hasattr(self, 'detail_preparer'):
-            return self.prepare_detail(data)
         else:
             return self.preparer.prepare(data)
 
