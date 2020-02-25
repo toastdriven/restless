@@ -79,7 +79,7 @@ class Resource(object):
         self.request = None
         self.data = None
         self.endpoint = None
-        self.status = 200
+        self.status = None
 
     @classmethod
     def as_list(cls, *init_args, **init_kwargs):
@@ -288,7 +288,11 @@ class Resource(object):
         except Exception as err:
             return self.handle_error(err)
 
-        status = self.status_map.get(self.http_methods[endpoint][method], OK)
+        if self.status is not None:
+            status = self.status
+        else:
+            status = self.status_map.get(self.http_methods[endpoint][method], OK)
+
         return self.build_response(serialized, status=status)
 
     def handle_error(self, err):
