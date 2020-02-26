@@ -284,11 +284,17 @@ class Resource(object):
             self.data = self.deserialize(method, endpoint, self.request_body())
             view_method = getattr(self, self.http_methods[endpoint][method])
             data = view_method(*args, **kwargs)
+            if isinstance(data, tuple):
+                status = data[1]
+                data = data[0]
+            else:
+                status = None
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
             return self.handle_error(err)
 
-        status = self.status_map.get(self.http_methods[endpoint][method], OK)
+        if status is None:
+            status = self.status_map.get(self.http_methods[endpoint][method], OK)
         return self.build_response(serialized, status=status)
 
     def handle_error(self, err):
