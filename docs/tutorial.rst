@@ -225,7 +225,7 @@ Methods
 -------
 
 We're also defining a ``list`` method & a ``detail`` method. Both can take
-optional postitional/keyword parameters if necessary.
+optional positional/keyword parameters if necessary.
 
 These methods serve the **data** to present for their given endpoints. You
 don't need to manually construct any responses/status codes/etc., just provide
