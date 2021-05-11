@@ -148,6 +148,32 @@ class SubPreparer(FieldsPreparer):
             'created': 'created_at',
         })
 
+    If you want to pass the same object handled by the outer preparer
+    to the `SubPreparer`, you can use a empty string for the `lookup`
+    argument. This is handy  for situations in which the initial data 
+    is represented as a flat structure, but the expected result must
+    provide nested dictionaries grouping some of these values.
+
+    Example::
+        
+        initial_data = {
+            'name': 'Joe',
+            'parents_mother': 'Janice',
+            'parantes_father': 'James',
+        } 
+        # First, define the nested fields you'd like to expose.
+        parents_preparer = FieldsPreparer(fields={
+            'mother': 'parents_mother',
+            'father': 'parents_father',
+        })
+        # Then, in the main preparer, pull them in using `SubPreparer`.
+        preparer = FieldsPreparer(fields={
+            'name': 'name',
+            'parents': SubPreparer('', parents_preparer), # pass empty string
+        })
+        final_data = preparer.prepare(initial_data)
+        // final_data == {'name': 'Joe', 'parents': {'mother': 'Janice', 'father': 'James'}}
+
     """
     def __init__(self, lookup, preparer):
         self.lookup = lookup
