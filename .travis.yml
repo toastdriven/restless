@@ -1,18 +1,20 @@
 language: python
-dist: xenial
 
 python:
-  - "2.7"
-  - "3.5"
   - "3.6"
   - "3.7"
-  - "pypy2.7-6.0" # CPython 2.7
+  - "3.8"
+  - "3.9"
+  - "pypy3"
 
 env:
-  - DJANGO="1.8"
-  - DJANGO="1.9"
-  - DJANGO="1.10"
-  - DJANGO="1.11"
+  - DJANGO="2.2"
+  - DJANGO="3.0"
+  - DJANGO="3.1"
+  - DJANGO="3.2"
+  - FLASK="1.0"
+  - FLASK="1.1"
+  - FLASK="2.0"
 
 # command to install dependencies
 install:

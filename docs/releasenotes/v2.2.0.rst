@@ -1,0 +1,12 @@
+restless v2.2.0
+===============
+
+:date: 2021-08-04
+
+
+Changes
+-------
+
+* Added pagination to DjangoResource
+* Added support to python 3.7+
+* Removed support to python < 3.5
