@@ -1,7 +1,7 @@
 import six
 
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404
@@ -128,6 +128,6 @@ class DjangoResource(Resource):
         :returns: A list of ``url`` objects for ``include(...)``
         """
         return [
-            url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
-            url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
+            path('', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
+            path('<pk>/', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
         ]

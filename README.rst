@@ -134,14 +134,14 @@ Hooking it up:
 .. code:: python
 
     # api/urls.py
-    from django.conf.urls.default import url, include
+    from django.urls import include, path
 
     from posts.api import PostResource
 
     urlpatterns = [
         # The usual suspects, then...
 
-        url(r'^api/posts/', include(PostResource.urls())),
+        path('api/posts/', include(PostResource.urls())),
     ]
 
 
