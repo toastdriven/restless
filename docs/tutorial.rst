@@ -134,7 +134,7 @@ a ``posts`` application, which has a model setup like so...::
 
 
     class Post(models.Model):
-        user = models.ForeignKey(User, related_name='posts')
+        user = models.ForeignKey(User, related_name='posts', on_delete=models.PROTECT)
         title = models.CharField(max_length=128)
         slug = models.SlugField(blank=True)
         content = models.TextField(default='', blank=True)
