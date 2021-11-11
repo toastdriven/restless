@@ -65,7 +65,7 @@ to your ``__init__``...::
     class PostResource(DjangoResource):
         # We'll lightly extend the ``__init__``.
         def __init__(self, *args, **kwargs):
-            super(PostResource, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
             # Add on a new top-level key, then define what HTTP methods it
             # listens on & what methods it calls for them.
@@ -100,7 +100,7 @@ manually or (once again) by extending a built-in method.::
 
     class PostResource(DjangoResource):
         def __init__(self, *args, **kwargs):
-            super(PostResource, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.http_methods.update({
                 'schema': {
                     'GET': 'schema',
@@ -127,7 +127,7 @@ manually or (once again) by extending a built-in method.::
         # Finally, extend the URLs.
         @classmethod
         def urls(cls, name_prefix=None):
-            urlpatterns = super(PostResource, cls).urls(name_prefix=name_prefix)
+            urlpatterns = super().urls(name_prefix=name_prefix)
             return [
                 url(r'^schema/$', cls.as_view('schema'), name=cls.build_url_name('schema', name_prefix)),
             ] + urlpatterns
@@ -305,7 +305,7 @@ could do something like::
         def prepare(self, data):
             # ``data`` is the object/dict to be exposed.
             # We'll call ``super`` to prep the data, then we'll mask the email.
-            prepped = super(UserResource, self).prepare(data)
+            prepped = super().prepare(data)
 
             email = prepped['email']
             at_offset = email.index('@')
