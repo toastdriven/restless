@@ -405,7 +405,7 @@ class Resource(object):
         if not getattr(data, 'should_prepare', True):
             prepped_data = data.value
         else:
-            prepped_data = [self.prepare(item) for item in data]
+            prepped_data = self.prepare_list(data)
 
         final_data = self.wrap_list_response(prepped_data)
         return self.serializer.serialize(final_data)
@@ -431,6 +431,20 @@ class Resource(object):
             prepped_data = self.prepare(data)
 
         return self.serializer.serialize(prepped_data)
+
+    def prepare_list(self, data):
+        """
+        Given a collection of data (``objects`` or ``dicts``), this will
+        potentially go through & reshape the output with the ``self.prepare``
+        method.
+
+        :param data: A collection to prepare for serialization
+        :type data: list or iterable
+
+        :returns: A potentially reshaped collection
+        :rtype: list
+        """
+        return [self.prepare(item) for item in data]
 
     def prepare(self, data):
         """
