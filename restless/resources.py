@@ -77,6 +77,7 @@ class Resource(object):
         self.init_args = args
         self.init_kwargs = kwargs
         self.request = None
+        self.params = None
         self.data = None
         self.endpoint = None
         self.status = 200
@@ -170,6 +171,21 @@ class Resource(object):
         """
         # By default, Django-esque.
         return self.request.body
+
+    def request_parameters(self):
+        """
+        Returns the current request URL parameters.
+
+        Useful for providing custom options on your resources.
+
+        If you're integrating with a new web framework, you might need to
+        override this method within your subclass.
+
+        :returns: The request parameters, parsed as a mapping
+        :rtype: dict
+        """
+        # By default, Django-esque.
+        return self.request.GET
 
     def build_response(self, data, status=200):
         """
@@ -281,6 +297,7 @@ class Resource(object):
             if not self.is_authenticated():
                 raise Unauthorized()
 
+            self.params = self.request_parameters()
             self.data = self.deserialize(method, endpoint, self.request_body())
             view_method = getattr(self, self.http_methods[endpoint][method])
             data = view_method(*args, **kwargs)

@@ -128,6 +128,9 @@ class TornadoResource(Resource):
     def request_body(self):
         return self.request.body 
 
+    def request_parameters(self):
+        return self.request.query_arguments
+
     def build_response(self, data, status=OK):
         if status == NO_CONTENT:
             # Avoid crashing the client when it tries to parse nonexisting JSON.
