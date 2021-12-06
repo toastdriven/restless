@@ -38,6 +38,19 @@ class FlaskResource(Resource):
 
         return _wrapper
 
+    @classmethod
+    def as_view(cls, route, *init_args, **init_kwargs):
+        # Overridden here, because Flask uses a global ``request`` object
+        # rather than passing it to each view.
+        def _wrapper(*args, **kwargs):
+            # Make a new instance so that no state potentially leaks between
+            # instances.
+            inst = cls(*init_args, **init_kwargs)
+            inst.request = request
+            return inst.handle(route, *args, **kwargs)
+
+        return _wrapper
+
     def request_body(self):
         return self.request.data
 
@@ -82,7 +95,7 @@ class FlaskResource(Resource):
         return '_'.join([endpoint_prefix, name])
 
     @classmethod
-    def add_url_rules(cls, app, rule_prefix, endpoint_prefix=None):
+    def add_url_rules(cls, app, rule_prefix, endpoint_prefix=None, pk='pk', pk_type='int'):
         """
         A convenience method for hooking up the URLs.
 
@@ -104,14 +117,17 @@ class FlaskResource(Resource):
         """
         methods = ['GET', 'POST', 'PUT', 'DELETE']
 
+        collection_rule = rule_prefix
         app.add_url_rule(
-            rule_prefix,
+            collection_rule,
             endpoint=cls.build_endpoint_name('list', endpoint_prefix),
             view_func=cls.as_list(),
             methods=methods
         )
+
+        instance_rule = '{}<{}:{}>/'.format(rule_prefix, pk_type, pk)
         app.add_url_rule(
-            rule_prefix + '<pk>/',
+            instance_rule,
             endpoint=cls.build_endpoint_name('detail', endpoint_prefix),
             view_func=cls.as_detail(),
             methods=methods
