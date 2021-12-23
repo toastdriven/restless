@@ -92,7 +92,7 @@ Finally, it's just a matter of hooking up the URLs as well. You can do this
 manually or (once again) by extending a built-in method.::
 
     # Add the correct import here.
-    from django.conf.urls import url
+    from django.urls import path
 
     from restless.dj import DjangoResource
     from restless.resources import skip_prepare
@@ -129,7 +129,7 @@ manually or (once again) by extending a built-in method.::
         def urls(cls, name_prefix=None):
             urlpatterns = super().urls(name_prefix=name_prefix)
             return [
-                url(r'^schema/$', cls.as_view('schema'), name=cls.build_url_name('schema', name_prefix)),
+                path('schema/', cls.as_view('schema'), name=cls.build_url_name('schema', name_prefix)),
             ] + urlpatterns
 
 .. note::
@@ -575,4 +575,3 @@ user provides a ``?format=yaml`` GET param...::
                 return json.dumps(body, cls=MoreTypesJSONEncoder)
 
 .. _`a host of problems`: https://pypi.python.org/pypi/defusedxml
-

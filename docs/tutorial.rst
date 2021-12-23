@@ -260,7 +260,7 @@ practice would be to create a URLconf just for the API portion of your site.::
 
     # The ``settings.ROOT_URLCONF`` file
     # myproject/urls.py
-    from django.conf.urls import url, include
+    from django.urls import path, include
 
     # Add this!
     from posts.api import PostResource
@@ -269,7 +269,7 @@ practice would be to create a URLconf just for the API portion of your site.::
         # The usual fare, then...
 
         # Add this!
-        url(r'api/posts/', include(PostResource.urls())),
+        path('api/posts/', include(PostResource.urls())),
     ]
 
 Note that unlike some other CBVs (admin specifically), the ``urls`` here is a
@@ -284,8 +284,8 @@ You can also manually hook up URLs by specifying something like::
         # ...
 
         # Identical to the above.
-        url(r'api/posts/$', PostResource.as_list(), name='api_post_list'),
-        url(r'api/posts/(?P<pk>\d+)/$', PostResource.as_detail(), name='api_post_detail'),
+        path('api/posts/', PostResource.as_list(), name='api_post_list'),
+        path('api/posts/<pk>/', PostResource.as_detail(), name='api_post_detail'),
     ]
 
 
