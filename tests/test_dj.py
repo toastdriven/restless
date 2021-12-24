@@ -279,6 +279,14 @@ class DjangoResourceTestCase(unittest.TestCase):
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(resp.status_code, 400)
 
+    def test_as_list_paginated_page_number_is_not_integer(self):
+        list_endpoint = DjTestResourcePaginated().as_list()
+        req = FakeHttpRequest('GET', get_request={'p': 'string'})
+
+        resp = list_endpoint(req)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        self.assertEqual(resp.status_code, 400)
+
     def test_as_detail(self):
         detail_endpoint = DjTestResource.as_detail()
         req = FakeHttpRequest('GET')
