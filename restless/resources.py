@@ -551,7 +551,7 @@ class Resource(object):
         """
         Updates the entire collection for a PUT on a list-style endpoint.
 
-        Uncommonly implemented due to the complexity & (varying) busines-logic
+        Uncommonly implemented due to the complexity & (varying) business-logic
         involved.
 
         **MUST BE OVERRIDDEN BY THE USER** - By default, this returns
