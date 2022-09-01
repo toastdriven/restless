@@ -30,7 +30,7 @@ ORM/data source. If you can import a module to work with the data & can
 represent it as JSON, Restless can work with it.
 
 Restless is small & easy to keep in your head. Common usages involve
-overridding just a few easily remembered method names. Total source code is
+overriding just a few easily remembered method names. Total source code is
 a under a thousand lines of code.
 
 Restless supports Python 3 **first**, but has backward-compatibility to work

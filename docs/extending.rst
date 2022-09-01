@@ -146,7 +146,7 @@ in your browser & get a JSON schema view!
 Customizing Data Output
 =======================
 
-There are four approaches to customizing your data ouput.
+There are four approaches to customizing your data output.
 
 #. The built-in ``Preparer/FieldsPreparer`` (simple)
 #. The included ``SubPreparer/CollectionSubPreparer`` (slightly more complex)

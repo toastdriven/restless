@@ -58,7 +58,7 @@ Porting is simply 1.adding an import & 2. changing the assignment.::
 Serialization
 ~~~~~~~~~~~~~
 
-Serialization is even easier. If you performed no overridding, there's nothing
+Serialization is even easier. If you performed no overriding, there's nothing
 to update. You simply get the new ``JSONSerializer`` object automatically.
 
 If you were overriding either ``raw_deserialize`` or ``raw_serialize``, you
