@@ -35,10 +35,7 @@ class PyrTestResource(PyramidResource):
         self.fake_db.append(self.data)
 
     def is_authenticated(self):
-        if self.request_method() == 'DELETE':
-            return False
-
-        return True
+        return self.request_method() != 'DELETE'
 
 
 @unittest.skipIf(not testing, 'Pyramid is not available')
