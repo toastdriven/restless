@@ -19,10 +19,10 @@ def _newer_or_equal_(v):
 
 
 def _equal_(v):
-    for i in six.moves.xrange(min(len(v), len(version_info))):
-        if v[i] != version_info[i]:
-            return False
-    return True
+    return all(
+        v[i] == version_info[i]
+        for i in six.moves.xrange(min(len(v), len(version_info)))
+    )
 
 try:
     from restless.tnd import TornadoResource, _BridgeMixin
@@ -73,10 +73,7 @@ class TndBasicTestResource(TndBaseTestResource):
         return self.fake_db
 
     def detail(self, pk):
-        for item in self.fake_db:
-            if item['id'] == pk:
-                return item
-        return None
+        return next((item for item in self.fake_db if item['id'] == pk), None)
 
     def create(self):
         self.fake_db.append(self.data)

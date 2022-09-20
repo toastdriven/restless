@@ -29,13 +29,8 @@ class PyramidResource(Resource):
         return _wrapper
 
     def build_response(self, data, status=OK):
-        if status == NO_CONTENT:
-            # Avoid crashing the client when it tries to parse nonexisting JSON.
-            content_type = 'text/plain'
-        else:
-            content_type = 'application/json'
-        resp = Response(data, status_code=status, content_type=content_type)
-        return resp
+        content_type = 'text/plain' if status == NO_CONTENT else 'application/json'
+        return Response(data, status_code=status, content_type=content_type)
 
     @classmethod
     def build_routename(cls, name, routename_prefix=None):
@@ -56,9 +51,7 @@ class PyramidResource(Resource):
         :rtype: string
         """
         if routename_prefix is None:
-            routename_prefix = 'api_{}'.format(
-                cls.__name__.replace('Resource', '').lower()
-            )
+            routename_prefix = f"api_{cls.__name__.replace('Resource', '').lower()}"
 
         routename_prefix = routename_prefix.rstrip('_')
         return '_'.join([routename_prefix, name])

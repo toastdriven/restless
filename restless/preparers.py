@@ -116,11 +116,7 @@ class FieldsPreparer(Preparer):
         if callable(value) and not hasattr(value, 'db_manager'):
             value = value()
 
-        if not remaining_lookup:
-            return value
-
-        # There's more to lookup, so dive in recursively.
-        return self.lookup_data(remaining_lookup, value)
+        return self.lookup_data(remaining_lookup, value) if remaining_lookup else value
 
 
 class SubPreparer(FieldsPreparer):
@@ -234,9 +230,4 @@ class CollectionSubPreparer(SubPreparer):
 
         Returns a list of data as the response.
         """
-        result = []
-
-        for item in self.get_inner_data(data):
-            result.append(self.preparer.prepare(item))
-
-        return result
+        return [self.preparer.prepare(item) for item in self.get_inner_data(data)]

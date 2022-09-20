@@ -1,7 +1,7 @@
 import six
 
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404
@@ -60,24 +60,19 @@ class DjangoResource(Resource):
 
     # Because Django.
     @classmethod
-    def as_list(self, *args, **kwargs):
-        return csrf_exempt(super(DjangoResource, self).as_list(*args, **kwargs))
+    def as_list(cls, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_list(*args, **kwargs))
 
     @classmethod
-    def as_detail(self, *args, **kwargs):
-        return csrf_exempt(super(DjangoResource, self).as_detail(*args, **kwargs))
+    def as_detail(cls, *args, **kwargs):
+        return csrf_exempt(super(DjangoResource, cls).as_detail(*args, **kwargs))
 
     def is_debug(self):
         return settings.DEBUG
 
     def build_response(self, data, status=OK):
-        if status == NO_CONTENT:
-            # Avoid crashing the client when it tries to parse nonexisting JSON.
-            content_type = 'text/plain'
-        else:
-            content_type = 'application/json'
-        resp = HttpResponse(data, content_type=content_type, status=status)
-        return resp
+        content_type = 'text/plain' if status == NO_CONTENT else 'application/json'
+        return HttpResponse(data, content_type=content_type, status=status)
 
     def build_error(self, err):
         # A bit nicer behavior surrounding things that don't exist.
@@ -105,9 +100,7 @@ class DjangoResource(Resource):
         :rtype: string
         """
         if name_prefix is None:
-            name_prefix = 'api_{}'.format(
-                cls.__name__.replace('Resource', '').lower()
-            )
+            name_prefix = f"api_{cls.__name__.replace('Resource', '').lower()}"
 
         name_prefix = name_prefix.rstrip('_')
         return '_'.join([name_prefix, name])
@@ -128,6 +121,6 @@ class DjangoResource(Resource):
         :returns: A list of ``url`` objects for ``include(...)``
         """
         return [
-            url(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
-            url(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
+            re_path(r'^$', cls.as_list(), name=cls.build_url_name('list', name_prefix)),
+            re_path(r'^(?P<pk>[\w-]+)/$', cls.as_detail(), name=cls.build_url_name('detail', name_prefix)),
         ]

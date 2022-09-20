@@ -66,10 +66,7 @@ class DjTestResource(DjangoResource):
         ]
 
     def is_authenticated(self):
-        if self.request_method() == 'DELETE' and self.endpoint == 'list':
-            return False
-
-        return True
+        return self.request_method() != 'DELETE' or self.endpoint != 'list'
 
     def list(self):
         return self.fake_db
@@ -80,7 +77,7 @@ class DjTestResource(DjangoResource):
                 return item
 
         # If it wasn't found in our fake DB, raise a Django-esque exception.
-        raise ObjectDoesNotExist("Model with pk {} not found.".format(pk))
+        raise ObjectDoesNotExist(f"Model with pk {pk} not found.")
 
     def create(self):
         self.fake_db.append(FakeModel(
@@ -154,7 +151,7 @@ class DjTestResourceHttp404Handling(DjTestResource):
                 return item
 
         # If it wasn't found in our fake DB, raise a Django-esque exception.
-        raise Http404("Model with pk {} not found.".format(pk))
+        raise Http404(f"Model with pk {pk} not found.")
 
 
 @unittest.skipIf(not settings, "Django is not available")
