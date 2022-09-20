@@ -24,11 +24,7 @@ if is_future is None:
 
     from tornado.concurrent import Future
 
-    if futures is None:
-        FUTURES = Future
-    else:
-        FUTURES = (Future, futures.Future)
-
+    FUTURES = Future if futures is None else (Future, futures.Future)
     is_future = lambda x: isinstance(x, FUTURES)
 
 
@@ -100,14 +96,19 @@ class TornadoResource(Resource):
         global _method
 
         new_cls = type(
-            cls.__name__ + '_' + _BridgeMixin.__name__ + '_restless',
-            (_BridgeMixin, cls._request_handler_base_,),
+            f'{cls.__name__}_{_BridgeMixin.__name__}_restless',
+            (
+                _BridgeMixin,
+                cls._request_handler_base_,
+            ),
             dict(
                 __resource_cls__=cls,
                 __resource_args__=init_args,
                 __resource_kwargs__=init_kwargs,
-                __resource_view_type__=view_type)
+                __resource_view_type__=view_type,
+            ),
         )
+
 
         """
         Add required http-methods to the newly created class
@@ -115,7 +116,7 @@ class TornadoResource(Resource):
         and then add corresponding http-methods used by Tornado.
         """
         bases = inspect.getmro(cls)
-        bases = bases[0:bases.index(Resource)-1]
+        bases = bases[:bases.index(Resource)-1]
         for k, v in cls.http_methods[view_type].items():
             if any(v in base_cls.__dict__ for base_cls in bases):
                 setattr(new_cls, k.lower(), _method)
@@ -129,13 +130,8 @@ class TornadoResource(Resource):
         return self.request.body 
 
     def build_response(self, data, status=OK):
-        if status == NO_CONTENT:
-            # Avoid crashing the client when it tries to parse nonexisting JSON.
-            content_type = 'text/plain'
-        else:
-            content_type = 'application/json'
-        self.ref_rh.set_header("Content-Type", "{}; charset=UTF-8"
-                               .format(content_type))
+        content_type = 'text/plain' if status == NO_CONTENT else 'application/json'
+        self.ref_rh.set_header("Content-Type", f"{content_type}; charset=UTF-8")
 
         self.ref_rh.set_status(status)
         self.ref_rh.finish(data)
@@ -152,13 +148,11 @@ class TornadoResource(Resource):
         method = self.request_method()
 
         try:
-            if not method in self.http_methods.get(endpoint, {}):
+            if method not in self.http_methods.get(endpoint, {}):
                 raise MethodNotImplemented(
-                    "Unsupported method '{}' for {} endpoint.".format(
-                        method,
-                        endpoint
-                    )
+                    f"Unsupported method '{method}' for {endpoint} endpoint."
                 )
+
 
             if not self.is_authenticated():
                 raise Unauthorized()

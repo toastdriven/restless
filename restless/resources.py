@@ -270,13 +270,11 @@ class Resource(object):
         try:
             # Use ``.get()`` so we can also dodge potentially incorrect
             # ``endpoint`` errors as well.
-            if not method in self.http_methods.get(endpoint, {}):
+            if method not in self.http_methods.get(endpoint, {}):
                 raise MethodNotImplemented(
-                    "Unsupported method '{}' for {} endpoint.".format(
-                        method,
-                        endpoint
-                    )
+                    f"Unsupported method '{method}' for {endpoint} endpoint."
                 )
+
 
             if not self.is_authenticated():
                 raise Unauthorized()
@@ -340,10 +338,7 @@ class Resource(object):
 
         :returns: The deserialized body or an empty ``list``
         """
-        if body:
-            return self.serializer.deserialize(body)
-
-        return []
+        return self.serializer.deserialize(body) if body else []
 
     def deserialize_detail(self, body):
         """
@@ -354,10 +349,7 @@ class Resource(object):
 
         :returns: The deserialized body or an empty ``dict``
         """
-        if body:
-            return self.serializer.deserialize(body)
-
-        return {}
+        return self.serializer.deserialize(body) if body else {}
 
     def serialize(self, method, endpoint, data):
         """
@@ -402,10 +394,11 @@ class Resource(object):
 
         # Check for a ``Data``-like object. We should assume ``True`` (all
         # data gets prepared) unless it's explicitly marked as not.
-        if not getattr(data, 'should_prepare', True):
-            prepped_data = data.value
-        else:
-            prepped_data = [self.prepare(item) for item in data]
+        prepped_data = (
+            [self.prepare(item) for item in data]
+            if getattr(data, 'should_prepare', True)
+            else data.value
+        )
 
         final_data = self.wrap_list_response(prepped_data)
         return self.serializer.serialize(final_data)
@@ -425,10 +418,11 @@ class Resource(object):
 
         # Check for a ``Data``-like object. We should assume ``True`` (all
         # data gets prepared) unless it's explicitly marked as not.
-        if not getattr(data, 'should_prepare', True):
-            prepped_data = data.value
-        else:
-            prepped_data = self.prepare(data)
+        prepped_data = (
+            self.prepare(data)
+            if getattr(data, 'should_prepare', True)
+            else data.value
+        )
 
         return self.serializer.serialize(prepped_data)
 
@@ -479,10 +473,7 @@ class Resource(object):
         :returns: Whether the request is authenticated or not.
         :rtype: boolean
         """
-        if self.request_method() == 'GET':
-            return True
-
-        return False
+        return self.request_method() == 'GET'
 
     # Common methods the user should implement.
 

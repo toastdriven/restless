@@ -46,11 +46,7 @@ class FlaskResource(Resource):
         return current_app.debug
 
     def build_response(self, data, status=OK):
-        if status == NO_CONTENT:
-            # Avoid crashing the client when it tries to parse nonexisting JSON.
-            content_type = 'text/plain'
-        else:
-            content_type = 'application/json'
+        content_type = 'text/plain' if status == NO_CONTENT else 'application/json'
         return make_response(data, status, {
             'Content-Type': content_type,
         })
@@ -74,9 +70,7 @@ class FlaskResource(Resource):
         :rtype: string
         """
         if endpoint_prefix is None:
-            endpoint_prefix = 'api_{}'.format(
-                cls.__name__.replace('Resource', '').lower()
-            )
+            endpoint_prefix = f"api_{cls.__name__.replace('Resource', '').lower()}"
 
         endpoint_prefix = endpoint_prefix.rstrip('_')
         return '_'.join([endpoint_prefix, name])
@@ -111,8 +105,8 @@ class FlaskResource(Resource):
             methods=methods
         )
         app.add_url_rule(
-            rule_prefix + '<pk>/',
+            f'{rule_prefix}<pk>/',
             endpoint=cls.build_endpoint_name('detail', endpoint_prefix),
             view_func=cls.as_detail(),
-            methods=methods
+            methods=methods,
         )
