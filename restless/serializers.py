@@ -2,7 +2,7 @@ from .exceptions import BadRequest
 from .utils import json, MoreTypesJSONEncoder
 
 
-class Serializer(object):
+class Serializer:
     """
     A base serialization class.
 

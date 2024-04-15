@@ -1,4 +1,4 @@
-class Data(object):
+class Data:
     def __init__(self, value, should_prepare=True, prepare_with=None):
         """
         A container object that carries meta information about the data.

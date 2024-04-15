@@ -1,4 +1,4 @@
-class Preparer(object):
+class Preparer:
     """
     A plain preparation object which just passes through data.
 

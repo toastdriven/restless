@@ -422,7 +422,7 @@ framework, we'll use those as an example...::
 
 
     class UserForm(ModelForm):
-        class Meta(object):
+        class Meta:
             model = User
             fields = ['username', 'first_name', 'last_name', 'email']
 
@@ -462,7 +462,7 @@ up your code into a validation method. An example of this might look like...::
 
 
     class UserForm(ModelForm):
-        class Meta(object):
+        class Meta:
             model = User
             fields = ['username', 'first_name', 'last_name', 'email']
 

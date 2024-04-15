@@ -1,13 +1,12 @@
 import unittest
 import socket
-import six
 
 from restless.utils import json
 from restless.constants import UNAUTHORIZED
 
 
 def _newer_or_equal_(v):
-    for i in six.moves.xrange(min(len(v), len(version_info))):
+    for i in range(min(len(v), len(version_info))):
         expected, tnd = v[i], version_info[i]
         if tnd > expected:
             return True
@@ -19,7 +18,7 @@ def _newer_or_equal_(v):
 
 
 def _equal_(v):
-    for i in six.moves.xrange(min(len(v), len(version_info))):
+    for i in range(min(len(v), len(version_info))):
         if v[i] != version_info[i]:
             return False
     return True

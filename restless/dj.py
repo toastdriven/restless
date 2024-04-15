@@ -1,5 +1,3 @@
-import six
-
 from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ObjectDoesNotExist
@@ -82,7 +80,7 @@ class DjangoResource(Resource):
     def build_error(self, err):
         # A bit nicer behavior surrounding things that don't exist.
         if isinstance(err, (ObjectDoesNotExist, Http404)):
-            err = NotFound(msg=six.text_type(err))
+            err = NotFound(msg=str(err))
 
         return super(DjangoResource, self).build_error(err)
 

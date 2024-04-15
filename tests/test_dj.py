@@ -1,9 +1,5 @@
 import unittest
-
-try:
-    from http.client import responses
-except ImportError:
-    from httplib import responses
+from http.client import responses
 
 try:
     from django.conf import settings

@@ -18,7 +18,7 @@ env:
 
 # command to install dependencies
 install:
-    - pip install six tox-travis
+    - pip install tox-travis
 
 # command to run tests
 script:

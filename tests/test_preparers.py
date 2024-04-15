@@ -4,7 +4,7 @@ from restless.preparers import (CollectionSubPreparer, SubPreparer,
                                 FieldsPreparer)
 
 
-class InstaObj(object):
+class InstaObj:
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)

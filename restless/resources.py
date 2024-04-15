@@ -20,7 +20,7 @@ def skip_prepare(func):
     return _wrapper
 
 
-class Resource(object):
+class Resource:
     """
     Defines a RESTful resource.
 

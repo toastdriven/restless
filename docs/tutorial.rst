@@ -141,7 +141,7 @@ a ``posts`` application, which has a model setup like so...::
         posted_on = models.DateTimeField(auto_now_add=True)
         updated_on = models.DateTimeField(auto_now=True)
 
-        class Meta(object):
+        class Meta:
             ordering = ['-posted_on', 'title']
 
         def __str__(self):
