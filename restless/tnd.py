@@ -5,6 +5,9 @@ from .exceptions import MethodNotImplemented, Unauthorized
 
 import weakref
 import inspect
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 try:
@@ -171,8 +174,8 @@ class TornadoResource(Resource):
                 data = yield data
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
+            logger.exception('Unhandled exception occurred: %s', err)
             raise gen.Return(self.handle_error(err))
-
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
         raise gen.Return(self.build_response(serialized, status=status))
 

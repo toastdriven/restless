@@ -1,6 +1,6 @@
 from functools import wraps
 import sys
-
+import logging
 from .constants import OK, CREATED, ACCEPTED, NO_CONTENT
 from .data import Data
 from .exceptions import MethodNotImplemented, Unauthorized
@@ -286,6 +286,7 @@ class Resource(object):
             data = view_method(*args, **kwargs)
             serialized = self.serialize(method, endpoint, data)
         except Exception as err:
+            logging.error('Exception occurred', exc_info=True)
             return self.handle_error(err)
 
         status = self.status_map.get(self.http_methods[endpoint][method], OK)
