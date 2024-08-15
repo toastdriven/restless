@@ -14,32 +14,31 @@ class UserResource(FlaskResource):
         return True
 
     def make_user_key(self, username):
-        return 'user_{}'.format(username)
+        return f'user_{username}'
 
     def list(self):
         usernames = self.conn.lrange('users', 0, 100)
-        users = []
-
-        for user in usernames:
-            users.append(self.conn.hgetall(self.make_user_key(user)))
-
-        return users
+        pipeline = self.conn.pipeline()
+        for username in usernames:
+            pipeline.hgetall(self.make_user_key(username))
+        return pipeline.execute()
 
     def detail(self, username):
         return self.conn.hgetall(self.make_user_key(username))
 
     def create(self):
         key = self.make_user_key(self.data['username'])
-        self.conn.hmset(
-            key,
-            {
-                'username': self.data['username'],
-                'email': self.data['email'],
-                'added_on': int(time.time()),
-            }
-        )
-        self.conn.rpush('users', self.data['username'])
-        return self.conn.hgetall(key)
+        user_data = {
+            'username': self.data['username'],
+            'email': self.data['email'],
+            'added_on': int(time.time()),
+        }
+        pipeline = self.conn.pipeline()
+        pipeline.hmset(key, user_data)
+        pipeline.rpush('users', self.data['username'])
+        pipeline.hgetall(key)
+        _, _, user = pipeline.execute()
+        return user
 
 
 UserResource.add_url_rules(app, rule_prefix='/api/users/')

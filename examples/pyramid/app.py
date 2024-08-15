@@ -18,11 +18,7 @@ class UserResource(PyramidResource):
 
     def list(self):
         usernames = self.conn.lrange('users', 0, 100)
-        users = []
-
-        for user in usernames:
-            users.append(self.conn.hgetall(self.make_user_key(user)))
-
+        users = [self.conn.hgetall(self.make_user_key(user)) for user in usernames]
         return users
 
     def detail(self, username):

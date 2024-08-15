@@ -4,7 +4,7 @@ from restless.tnd import TornadoResource
 
 class PetResource(TornadoResource):
     def prepare(self):
-        self.fake_db = {
+        self.fake_db = [
             {
                 "id": 1,
                 "name": "Mitti",
@@ -15,7 +15,7 @@ class PetResource(TornadoResource):
                 "name": "Gary",
                 "type": "cat"
             }
-        }
+        ]
 
     @gen.coroutine
     def list(self):
@@ -32,4 +32,3 @@ app = web.Application(routes, debug=True)
 if __name__ == '__main__':
     app.listen(8001)
     tornado.ioloop.IOLoop.instance().start()
-

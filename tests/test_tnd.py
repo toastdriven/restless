@@ -244,10 +244,10 @@ class TndDeleteTestResource(TndBasicTestResource):
     testing inherited resource
     """
     def delete(self, pk):
-        self.fake_db = filter(lambda x: x['id'] != pk, self.fake_db)
+        self.fake_db = [x for x in self.fake_db if x['id'] != pk]
 
     def delete_list(self):
-        self.fake_db = {}
+        self.fake_db = []
 
 
 @unittest.skipIf(not app, 'Tornado is not available')
@@ -327,4 +327,3 @@ class TndAsyncResourceTestCase(BaseHTTPTestCase):
             'id': 'de-faced',
             'title': 'Another'
         })
-

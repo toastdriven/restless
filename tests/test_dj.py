@@ -66,33 +66,26 @@ class DjTestResource(DjangoResource):
         ]
 
     def is_authenticated(self):
-        if self.request_method() == 'DELETE' and self.endpoint == 'list':
-            return False
-
-        return True
+        return not (self.request_method() == 'DELETE' and self.endpoint == 'list')
 
     def list(self):
         return self.fake_db
 
     def detail(self, pk):
-        for item in self.fake_db:
-            if item.id == pk:
-                return item
-
-        # If it wasn't found in our fake DB, raise a Django-esque exception.
-        raise ObjectDoesNotExist("Model with pk {} not found.".format(pk))
+        try:
+            return next(item for item in self.fake_db if item.id == pk)
+        except StopIteration:
+            raise ObjectDoesNotExist(f"Model with pk {pk} not found.")
 
     def create(self):
-        self.fake_db.append(FakeModel(
-            **self.data
-        ))
+        self.fake_db.append(FakeModel(**self.data))
 
     def update(self, pk):
         for item in self.fake_db:
             if item.id == pk:
-                for k, v in self.data:
+                for k, v in self.data.items():
                     setattr(item, k, v)
-                    return
+                return
 
     def create_detail(self):
         raise ValueError({
@@ -101,10 +94,7 @@ class DjTestResource(DjangoResource):
         })
 
     def delete(self, pk):
-        for i, item in enumerate(self.fake_db):
-            if item.id == pk:
-                del self.fake_db[i]
-                return
+        self.fake_db[:] = [item for item in self.fake_db if item.id != pk]
 
     @skip_prepare
     def schema(self):

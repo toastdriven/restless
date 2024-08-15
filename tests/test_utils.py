@@ -8,7 +8,7 @@ class FormatTracebackTestCase(unittest.TestCase):
     def test_format_traceback(self):
         try:
             raise ValueError("Because we need an exception.")
-        except:
+        except ValueError as e:
             exc_info = sys.exc_info()
             result = format_traceback(exc_info)
             self.assertTrue(result.startswith('Traceback (most recent call last):\n'))
